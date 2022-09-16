@@ -157,7 +157,7 @@ function render(){
     // render game stat
     ctx.fillStyle = 'green';
     ctx.font = "bold 20px Arial ";
-    if (game.line_clear>0 && game.line_clear<4)ctx.fillText('TSPIN',10,150)
+    if (game.line_clear>0 && game.line_clear<4 && game.b2b>=0)ctx.fillText('TSPIN',10,150)
     if (game.line_clear>0)ctx.fillText(['','Single','Double','Triple','Quad'][game.line_clear],10,200)
     if (game.combo > 0) ctx.fillText(game.combo+' Combo',10,300)
     if (game.pc) ctx.fillText('All Clear',10,350)
