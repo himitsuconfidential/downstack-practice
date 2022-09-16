@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+    
+</head>
+<body>
+    <div class="banner">
+        <label> Tetris Downstack Puzzle - Practice</label>
+    </div>
+    <div class="flex">
+        <div id="leftpanel" class="panel">
+            <button id='setting_button' class="collapsible" onclick="document.getElementById('setting').hidden=!document.getElementById('setting').hidden">Setting ᐯ</button><br>
+            <div id='setting' hidden=true>
+                <table>
+                    <tbody>
+                    <tr><td width="150">Move Left:</td><td width="125"><input class='keybind' id="input1" type="text" size="7" value="" readOnly></td></tr>
+                    <tr><td>Move Right:</td><td><input class='keybind' id="input2" type="text" size="7" value="" readOnly></td></tr>
+                    <tr><td>Soft Drop:</td><td><input class='keybind' id="input3" type="text" size="7" value="" readOnly></td></tr>
+                    <tr><td>Hard Drop:</td><td><input class='keybind' id="input4" type="text" size="7" value="" readOnly></td></tr>
+                    <tr><td>Rotate Left:</td><td><input class='keybind' id="input5" type="text" size="7" value="" readOnly></td></tr>
+                    <tr><td>Rotate Right:</td><td><input class='keybind' id="input6" type="text" size="7" value="" readOnly></td></tr>
+                    <tr><td>Rotate 180:</td><td><input class='keybind' id="input7" type="text" size="7" value="" readOnly></td></tr>
+                    <tr><td>Hold:</td><td><input class='keybind' id="input8" type="text" size="7" value="" readOnly></td></tr>
+                    <tr><td>Retry:</td><td><input class='keybind' id="input9" type="text" size="7" value="" readOnly></td></tr>
+                    <tr><td>Show Answer:</td><td><input class='keybind' id="input10" type="text" size="7" value="" readOnly></td></tr>
+                    <tr><td>DAS: (1 to 200)</td><td><input id="input11" type="number" min="1" max='200'></td></tr>
+                    <tr><td>ARR: (0 to 100)</td><td><input id="input12" type="number" min="0" max='100'></td></tr>
+
+                    
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+        <div id="tetris">
+            <canvas id="board" tabindex='1' width="520" height="610" style="border:1px solid #000000;" z-index="4"></canvas>
+        </div>
+
+        <div id="rightpanel" class="panel">
+            
+            <button class="game_button" onclick="play_a_combopc_map(); board.focus()">Combo into PC</button><br>
+            <button class="game_button" onclick="play_a_combo_map(); board.focus()">Combo</button><br>
+            <button class="game_button" onclick="play_a_comboquad_map(); board.focus()">Combo into Quad</button><br>
+            <button class="game_button" onclick="play_a_combotsd_map(); board.focus()">Combo into Tspin Double</button><br>
+            <button class="game_button" onclick="retry(); board.focus()">Retry</button><br>
+            <button class="game_button" onclick="show_ans(); board.focus()">Show Answer</button><br>
+
+            <div id="winning_requirement">
+                <h3>Winning Requirement:</h3>
+                <p id="winning_requirement1">6 Combo</p>
+                <p id="winning_requirement2">All Clear at the end</p>
+            </div>
+
+            <button id='gamemode_button' class="collapsible" onclick="document.getElementById('gamemode').hidden=!document.getElementById('gamemode').hidden">Game Mode ᐯ</button>
+            <div id="gamemode" hidden=true>
+                
+                <span>Number of piece:   </span><input id="input13" type="number" min="2" max='7'>
+                <br>
+                <input id="input14" type="checkbox" checked="checked"><span>More skims in the solution</span>
+                <br>
+                <input id="input15" type="checkbox" checked="checked"><span>More holes in the map</span>
+
+            </div>
+
+        </div>
+    </div>
+    <script src="header.js"></script>
+    <script src="script.js"></script>
+
+</body>
+</html>
