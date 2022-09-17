@@ -43,7 +43,7 @@
 
         <div id="rightpanel" class="panel">
             
-            <button class="game_button" onclick="play_a_pc_map(); board.focus()">Combo into PC</button><br>
+            <button class="game_button" onclick="play_a_pc_map(); board.focus()">Generate Map</button><br>
             <button class="game_button" onclick="retry(); board.focus()">Retry</button><br>
             <button class="game_button" onclick="show_ans(); board.focus()">Show Answer</button><br>
 
@@ -53,14 +53,15 @@
             </div>
 
             <button id='gamemode_button' class="collapsible" onclick="document.getElementById('gamemode').hidden=!document.getElementById('gamemode').hidden">Game Mode ᐯ</button>
-            <div id="gamemode" hidden=true>
+            <div id="gamemode">
                 
                 <span>Number of piece:   </span><input id="input13" type="number" min="2" max='7'>
                 <br>
                 <input id="input14" type="checkbox" checked="checked"><span>More skims in the solution</span>
                 <br>
                 <input id="input15" type="checkbox" checked="checked"><span>More holes in the map</span>
-
+                <br>
+                <input id="input16" type="checkbox" checked="checked"><span>Generate unique pieces</span>
             </div>
 
         </div>

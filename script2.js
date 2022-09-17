@@ -3,7 +3,7 @@ var game = new Game();
 console.log(game.tetramino, JSON.stringify(game.to_shape()))
 const Keybind = {'keydown':{}, 'keyup':{}}
 var Config = {'das':100, 'arr':0, 'delay':0, 'pressing_left':false, 'pressing_right': false, 'pressing_down': false, 'pressing':{},
-'skim_ind':true, 'mdhole_ind':false, 'mode':'prepare', 'no_of_reserved_piece':7, 'no_of_piece':7,
+'skim_ind':true, 'mdhole_ind':false, 'unqiue_ind':true, 'mode':'prepare', 'no_of_reserved_piece':7, 'no_of_piece':7,
 'no_of_trial':0, 'no_of_success':0}
 var Customized_key = ['ArrowLeft','ArrowRight','ArrowDown','Space','KeyZ','KeyX','KeyA','ShiftLeft','KeyR','KeyP']
 var board = document.getElementById('board')
@@ -40,6 +40,7 @@ function load_gamemode(){
     document.getElementById('input13').value = Config.no_of_piece
     document.getElementById('input14').checked = Config.skim_ind
     document.getElementById('input15').checked = Config.mdhole_ind
+    document.getElementById('input16').checked = Config.unqiue_ind
 }
 
 
@@ -72,7 +73,8 @@ function save_gamemode(){
         Config.no_of_piece = 7
     }
     Config.skim_ind = document.getElementById('input14').checked
-    Config.mdhole_ind = document.getElementById('input15').checked 
+    Config.mdhole_ind = document.getElementById('input15').checked
+    Config.unqiue_ind = document.getElementById('input16').checked
 }
 
 /*
@@ -329,6 +331,7 @@ function set_event_listener(){
     document.getElementById('input13').oninput = e=>{save_gamemode()}
     document.getElementById('input14').onchange = e=>{save_gamemode()}
     document.getElementById('input15').onchange = e=>{save_gamemode()}
+    document.getElementById('input16').onchange = e=>{save_gamemode()}
 }
 /*
 3. map generation
@@ -600,12 +603,42 @@ function try_a_piece(){
     return false
 }
 
-
+function is_even_distributed(bag){
+    var last_piece = null
+    var counter = {I:0, O:0, T:0, J:0, L:0, Z:0, S:0}
+    var limit = {I:2, O:2, T:2, J:2, L:2, Z:2, S:2}
+    if (Config.unqiue_ind){
+        limit = {I:1, O:1, T:1, J:1, L:1, Z:1, S:1}
+    }
+    for (var piece of bag){
+        counter[piece] += 1
+        if (counter[piece] > limit[piece])
+            return false
+        if (piece == last_piece)
+            return false
+        last_piece = piece
+    }
+    return true
+}
 
 function try_all_pieces(){
-    bag = [...'IOTJLZS']
-    shuffle(bag)
+    var seenbag = []
+    var unseenbag = []
+    for (var piece of 'IOTJLZS'){
+        if (Record.piece_added.includes(piece)){
+            seenbag.push(piece)
+        }
+        else{
+            unseenbag.push(piece)
+        }
+    }
+    shuffle(seenbag)
+    shuffle(unseenbag)
+    
+    var bag = unseenbag.concat(seenbag)
+
     for (var piece of bag){
+        if (! is_even_distributed(Record.piece_added.concat(piece))) continue
         shuffle(possible_piece_config_table[piece])
         for (var [ori_idx, col_idx] of possible_piece_config_table[piece]){
             game.tetramino = piece
@@ -683,22 +716,13 @@ function generate_final_map(){
 }
 
 function generate_a_ds_map(move){
-    function is_even_distributed(bag){
-        counter = {I:0, O:0, T:0, J:0, L:0, Z:0, S:0}
-        limit = {I:1, O:2, T:2, J:2, L:2, Z:2, S:2}
-        for (piece of bag){
-            counter[piece] += 1
-            if (counter[piece] > limit[piece])
-                return false
-        }
-        return true
-    }
+
 
     for (var trial=0; trial<5; trial++){
         if (move == 1){
-            success_generate = try_a_move() && is_even_distributed(Record.piece_added)}
+            success_generate = try_a_move()}
         else{
-            success_generate = try_a_move() && is_even_distributed(Record.piece_added) && generate_a_ds_map(move - 1)}
+            success_generate = try_a_move() && generate_a_ds_map(move - 1)}
         if (success_generate){
             return true}
         else{
@@ -785,12 +809,12 @@ function show_ans(){
 /*
 4. start
 */
-play_a_pc_map()
+
 set_event_listener()
 load_setting()
 load_gamemode()
 update_keybind()
 board.focus()
-
+play_a_pc_map()
 render()
 
