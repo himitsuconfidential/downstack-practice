@@ -9,10 +9,32 @@ var Customized_key = ['ArrowLeft','ArrowRight','ArrowDown','Space','KeyZ','KeyX'
 var board = document.getElementById('board')
 
 const clone = (items) => items.map(item => Array.isArray(item) ? clone(item) : item);
+/*
+0. sound effect
+*/
+const sound={
+    0:new Audio ("sound/1.ogg"),
+    1:new Audio ("sound/2.ogg"),
+    2:new Audio ("sound/3.ogg"),
+    3:new Audio ("sound/4.ogg"),
+    4:new Audio ("sound/5.ogg"),
+    5:new Audio ("sound/6.ogg"),
+    6:new Audio ("sound/7.ogg"),
+    win:new Audio ("sound/win.ogg"),
+    lose:new Audio ("sound/lose.ogg")
+}
+    
+function play_sound(){
+    if (game.combo >= 0){
+        console.log('sing', game.combo)
+        sound[game.combo].cloneNode().play()
+    }
+}
 
 /*
-0. html related
+1. html related
 */
+
 
 function load_setting(){
     try{
@@ -81,7 +103,7 @@ function save_gamemode(){
 }
 
 /*
-1. render
+2. render
 */
 function render(){
     var ctx = document.getElementById("board").getContext('2d');
@@ -172,7 +194,7 @@ function render(){
     
 }
 /*
-2. keybind
+3. keybind
 */
 function press_left(first_call = false){
 
@@ -276,7 +298,7 @@ function update_keybind(){
     Keybind.keydown[Customized_key[2]] = e=>{press_down(true)}
     Keybind.keyup[Customized_key[2]] = e=>{release_down(true)}
 
-    add_generic_keybind(Customized_key[3], ()=> (game.harddrop(), detect_win()))
+    add_generic_keybind(Customized_key[3], ()=> (game.harddrop(), play_sound(), detect_win()))
     add_generic_keybind(Customized_key[4], ()=> game.rotate_anticlockwise())
     add_generic_keybind(Customized_key[5], ()=> game.rotate_clockwise())
     add_generic_keybind(Customized_key[6], ()=> game.rotate_180())
@@ -337,7 +359,7 @@ function set_event_listener(){
     document.getElementById('input16').onchange = e=>{save_gamemode()}
 }
 /*
-3. map generation
+4. map generation
 */
 Record={
     added_line:[],
@@ -368,7 +390,7 @@ Record={
     
 }
 
-// 3.1 add line
+// 4.1 add line
 function add_line(row_idx){
     for (var i=0; i<10; i++){
         for (var j=19; j>row_idx; j--){
@@ -432,7 +454,7 @@ function add_random_line_less_skim(){
         add_line(row_index)
     }
 }
-// 3.2 validation test
+// 4.2 validation test
 function try_drop(){//return whether garbage below current piece can be converted to current piece in current column
     var shape = game.to_shape()
     var heights = []
@@ -594,7 +616,7 @@ function is_few_non_cheese_hole(){
     return no_of_non_cheese_holes <= Config.mdhole_ind
 }
 
-// 3.3 try to add pieces
+// 4.3 try to add pieces
 function try_a_piece(){
     // find position piece that include (x,y)
     // find neighbour piece
@@ -698,7 +720,7 @@ function get_shuffled_holdable_queue(queue){
     }
     return result
 }
-// 3.4 shuffle queue and play / restart
+// 4.4 shuffle queue and play / restart
 function play(retry = true){
     game = new Game()
     if (retry)
@@ -724,7 +746,7 @@ function play(retry = true){
                 game.board[row_idx][col_idx] = 'N'}}}
     }
 }
-// 3.5 generate the final map and develop the progression
+// 4.5 generate the final map and develop the progression
 function generate_final_map(){
     
     game = new Game()
@@ -800,10 +822,12 @@ function detect_win(){
     if (game.total_piece == Config.no_of_piece){
         
         if (game.pc){
-            play_a_map()          
+            sound['win'].play()
+            play_a_map() 
             Config.no_of_success += 1
         }
         else{
+            sound['lose'].play()
             retry()
         }
             
@@ -823,7 +847,7 @@ function show_ans(){
 }
 }
 /*
-4. start
+5. start
 */
 
 set_event_listener()
