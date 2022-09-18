@@ -3,10 +3,13 @@ var game = new Game();
 console.log(game.tetramino, JSON.stringify(game.to_shape()))
 const Keybind = {'keydown':{}, 'keyup':{}}
 var Config = {'das':100, 'arr':0, 'delay':0, 'pressing_left':false, 'pressing_right': false, 'pressing_down': false, 'pressing':{},
-'skim_ind':false, 'mdhole_ind':false, 'unqiue_ind':true, 'mode':'prepare', 'no_of_reserved_piece':7, 'no_of_piece':7,
+'skim_ind':false, 'mdhole_ind':false, 'unqiue_ind':true, 'smooth_ind':true, 'mode':'prepare', 'no_of_unreserved_piece':7, 'no_of_piece':7,
 'no_of_trial':0, 'no_of_success':0}
 var Customized_key = ['ArrowLeft','ArrowRight','ArrowDown','Space','KeyZ','KeyX','KeyA','ShiftLeft','KeyR','KeyP']
 var board = document.getElementById('board')
+
+const clone = (items) => items.map(item => Array.isArray(item) ? clone(item) : item);
+
 /*
 0. html related
 */
@@ -41,6 +44,7 @@ function load_gamemode(){
     document.getElementById('input14').checked = Config.skim_ind
     document.getElementById('input15').checked = Config.mdhole_ind
     document.getElementById('input16').checked = Config.unqiue_ind
+    document.getElementById('input17').checked = Config.smooth_ind
 }
 
 
@@ -75,6 +79,7 @@ function save_gamemode(){
     Config.skim_ind = document.getElementById('input14').checked
     Config.mdhole_ind = document.getElementById('input15').checked 
     Config.unqiue_ind = document.getElementById('input16').checked
+    Config.smooth_ind = document.getElementById('input17').checked
 }
 
 /*
@@ -332,6 +337,7 @@ function set_event_listener(){
     document.getElementById('input14').onchange = e=>{save_gamemode()}
     document.getElementById('input15').onchange = e=>{save_gamemode()}
     document.getElementById('input16').onchange = e=>{save_gamemode()}
+    document.getElementById('input17').onchange = e=>{save_gamemode()}
 }
 /*
 3. map generation
@@ -435,13 +441,27 @@ function try_drop(){//return whether garbage below current piece can be converte
     var heights = []
     for (var[c,r] of shape) heights.push(r)
     var lowest_height = Math.min(...heights)
-    for (var fall=1; fall<=lowest_height; fall++){
+
+    var min_relative_height = 20 
+    for (var [col, row] of shape){
+        var ground_height = 0
+        for (var i=0; i<row; i++)
+            if (game.board[i][col] == 'G')
+                ground_height = i+1
+        min_relative_height = Math.min(min_relative_height, row - ground_height)
+    }
+
+
+    for (var fall=min_relative_height+1; fall<=lowest_height; fall++){
         
         var all_g = true
         
         for (var [col, row] of shape){
             if (game.board[row-fall][col] != 'G'){
-                all_g = false}}
+                all_g = false
+                break
+            }
+        }
         if (all_g){
             for (var [col, row] of shape){
                 game.board[row-fall][col] = 'N'}
@@ -544,6 +564,29 @@ function get_unstability(){
     }
     return unstability}
 
+function is_smooth(arr){
+    var uped = false
+    var downed = false
+    var last = null
+    for (var ele of arr){
+        if (last == null){
+            last = ele
+        }
+        else{
+            
+            if (ele - last >1){
+                uped = true
+            }
+            else if (last - ele >1){
+                if (uped) return false
+                downed = true
+            }
+            last = ele
+        }
+    }
+    return true
+}
+
 function is_few_non_cheese_hole(){
     var height = []
     for (var col_idx=0; col_idx<10; col_idx++) {
@@ -553,6 +596,15 @@ function is_few_non_cheese_hole(){
                 h=row_idx}}
         height.push(h)
     }
+
+    if (Config.smooth_ind){
+        if (! is_smooth(height))
+         return false
+        var height_copy = [...height].sort(function(a, b){return a - b})
+        if (height_copy[8] - height_copy[1] > 5)
+            return false
+    }
+
     var holes = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     var non_garbages = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     for (var row_idx=0; row_idx<20; row_idx++) 
@@ -566,8 +618,8 @@ function is_few_non_cheese_hole(){
     var no_of_non_cheese_holes = 0
     var is_cheese_level = true
     for (var i=0; i<20; i++){
-        non_garbage = non_garbages[i]
-        hole = holes[i]
+        var non_garbage = non_garbages[i]
+        var hole = holes[i]
         if (non_garbage != 1){
             is_cheese_level = false}
         if (! is_cheese_level){
@@ -581,7 +633,6 @@ function is_few_non_cheese_hole(){
 function try_a_piece(){
     // find position piece that include (x,y)
     // find neighbour piece
-    var previous_board = JSON.stringify(game.board)
     if (try_drop()){
         
         //pass test if the piece is reachable , the added line is clearable , the piece is not floatable , unstability == 0 and there are few holes
@@ -591,12 +642,11 @@ function try_a_piece(){
         test = test && is_few_non_cheese_hole()
         test = test && (get_unstability() == 0)
         test = test && (is_exposed() || is_spinable())
-        if (test == true){
-            game.board = JSON.parse(previous_board)
-            return true
+        for (var [col, row] of shape){
+            game.board[row][col] = "G"
         }
-        else{
-            game.board = JSON.parse(previous_board)}
+        return test
+
     }
 
     return false
@@ -680,7 +730,7 @@ function try_a_move(){
     //step 2 try to add piece
     if (try_all_pieces()){
         game.lock()
-        Record.board.push(JSON.stringify(game.board))
+        Record.board.push(clone(game.board))
         return true
     }
     else{
@@ -717,7 +767,7 @@ function play(retry = true){
     game.update()
     game.holdmino = ''
     if ((Record.board.length)>0){
-        game.board = JSON.parse(Record.board[Record.board.length-1])
+        game.board = clone(Record.board[Record.board.length-1])
         for (var row_idx=0; row_idx<20; row_idx++){
             for (var col_idx=0; col_idx<10; col_idx++){
                 if (game.board[row_idx][col_idx] != 'G'){
@@ -802,9 +852,9 @@ function generate_a_ds_map(move){
             Record.board.length = Config.no_of_unreserved_piece-move
             Record.piece_added.length = Config.no_of_unreserved_piece-move
             if (Record.board.length > 0){
-                game.board = JSON.parse(Record.board[Record.board.length-1])}
+                game.board = clone(Record.board[Record.board.length-1])}
             else{
-                game.board = JSON.parse(Record.finished_map)}
+                game.board = clone(Record.finished_map)}
         }
     }
     return false
@@ -820,20 +870,25 @@ function play_a_map(mode = null){
     Config.mode = mode
     
     generate_final_map()
-    Record.finished_map = JSON.stringify(game.board)
+    Record.finished_map = clone(game.board)
     game.drawmode = true
     Record.piece_added = []
     Record.board = []
+    
     for (var i=0; i<99; i++) {
+        if (i==50){
+            Config.skim_ind = false
+        }
         if (generate_a_ds_map(Config.no_of_unreserved_piece) && game.get_max_height() < 17){
             break}
         else if (i%2 == 1){
             generate_final_map()
-            Record.finished_map = JSON.stringify(game.board)
+            Record.finished_map = clone(game.board)
         }
+        
     }
             
-
+    Config.skim_ind = document.getElementById('input14').checked
     
     play(false)
     
@@ -895,7 +950,7 @@ function retry(){
 
 function show_ans(){
     if (Record.board.length>0){
-        game.board = JSON.parse(Record.board[Record.board.length-1])
+        game.board = clone(Record.board[Record.board.length-1])
         render()
         setTimeout(retry, 1000)
 }
