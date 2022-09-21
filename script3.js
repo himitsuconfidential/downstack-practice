@@ -3,7 +3,7 @@ var game = new Game();
 console.log(game.tetramino, JSON.stringify(game.to_shape()))
 const Keybind = {'keydown':{}, 'keyup':{}}
 var Config = {'das':100, 'arr':0, 'delay':0, 'pressing_left':false, 'pressing_right': false, 'pressing_down': false, 'pressing':{},
-'skim_ind':true, 'mdhole_ind':false, 'unqiue_ind':true, 'mode':'prepare', 'no_of_unreserved_piece':7, 'no_of_piece':7,
+'skim_ind':true, 'mdhole_ind':false, 'unqiue_ind':true, 'mode':'4x4 box', 'no_of_unreserved_piece':7, 'no_of_piece':7,
 'no_of_trial':0, 'no_of_success':0}
 var Customized_key = ['ArrowLeft','ArrowRight','ArrowDown','Space','KeyZ','KeyX','KeyA','ShiftLeft','KeyR','KeyP']
 var board = document.getElementById('board')
@@ -75,7 +75,12 @@ function load_setting(){
 }
 
 function load_gamemode(){
-
+    var text = ''
+    for (var modname in jsondata){
+        text += `<option value="${modname}">${modname}</option>`
+    }
+    text += '<option value="customized">customized</option>'
+    document.getElementById('input13').innerHTML = text;
 }
 
 
@@ -101,7 +106,9 @@ function save_setting(){
 }
 
 function save_gamemode(){
-
+    console.log('save_gamemode')
+    var selection = document.getElementById('input13')
+    Config.mode = selection.options[selection.selectedIndex].value
 }
 
 /*
@@ -314,14 +321,14 @@ function set_event_listener(){
     document.onkeydown = (e => {
         console.log('down',e.code)
         var func = Keybind.keydown[e.code];
-        if (['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code)){
+        if (['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code) && document.activeElement.tagName != 'TEXTAREA'){
             e.preventDefault()}
         if (document.activeElement.className == 'keybind'){
             document.activeElement.value = e.code
             save_setting()
             
         }
-        if (document.activeElement.tagName != 'INPUT' && func != undefined){
+        if (document.activeElement.tagName != 'INPUT' && document.activeElement.tagName != 'TEXTAREA' && func != undefined){
             board.focus()
             func()
         }
@@ -355,6 +362,11 @@ function set_event_listener(){
     })
     document.getElementById('input11').oninput = e=>{save_setting()}
     document.getElementById('input12').oninput = e=>{save_setting()}
+    document.getElementById('input13').onchange = e=>{save_gamemode();
+    var is_hidden = !(Config.mode == 'customized')
+    document.getElementById('customized').hidden = is_hidden
+    }
+
 }
 /*
 4. map generation
@@ -417,10 +429,16 @@ function play(retry = true){
 }
 
 
+
 function play_a_map(mode = null){
     if (mode == null){
         mode = Config.mode}
     Config.mode = mode
+
+    if (mode == 'customized'){
+        play_a_customized_map()
+        return
+    }
     game = new Game()
     Config.no_of_piece = jsondata[mode]["no_of_piece"]
     game.board = clone2d(jsondata[mode]['board']).reverse()
@@ -460,16 +478,85 @@ function retry(){
     play()
     render()
 }
+// 4.5 customized_map
+function load_map(){
+    var partial_map = document.getElementById('field').value.trim().split('\n').reverse()
+    if (partial_map.length >20){
+        return false}
+    for (var line of partial_map){
+        if (line.length != 10){
+            return false}}
+    for (var i=0; i<partial_map.length; i++){
+        game.board[i] = [...partial_map[i].replaceAll('X','G').replaceAll('_','N')]}
+    return true
+}
+function play_a_customized_map(){
+    game = new Game()
+    load_map()
+    Record.finished_map = clone(game.board)
+    Record.piece_added = queue_generator(document.getElementById('input_queue').value)
+    Config.no_of_piece = Record.piece_added.length
+    play()
+}
 
+function queue_generator(expr){
+    //example of queue I,[IJLOSTZ]p3; I,*p3
+    var tokens = expr.split(',')
+    var queue = []
+    for (var token of tokens){
+        var repeat = 1
+        var subqueue = ''
+        var splitted_token = token.split('p')
+
+        if (splitted_token.length == 2){
+            repeat = parseInt(splitted_token[1])
+        }
+        else if (splitted_token.length != 1){
+            return false
+        }
+
+        if (splitted_token[0].startsWith('[')  && splitted_token[0].endsWith(']')){
+            var queue_token = splitted_token[0].slice(1,splitted_token[0].length-1)
+        }
+        else{
+            var queue_token = splitted_token[0]
+        }
+
+        for (var letter of queue_token){
+
+            if (letter == '*'){
+                if (splitted_token[0].length != 1){
+                    return false}
+                subqueue = 'IJLOSTZ'
+            }
+            else if ('IJLOSTZ'.includes(letter)){
+                subqueue += letter
+            }
+            else{
+                return false
+            }
+        }
+        if (subqueue.length >0){
+            if (repeat > subqueue.length){
+                return false
+            }
+            var added = [...subqueue]
+            shuffle(added)
+            queue = queue.concat(added.slice(0,repeat))
+        }
+
+    }
+    return queue
+}
 /*
 5. start
 */
 
 set_event_listener()
 load_setting()
-load_gamemode()
 update_keybind()
 
-setTimeout(play_a_map, 1000,'4x4 box')
+setTimeout(load_gamemode,1500)
+setTimeout(play_a_map, 1500)
 
 

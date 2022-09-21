@@ -58,18 +58,32 @@
 
         <div id="rightpanel" class="panel">
             
-            <button class="game_button" onclick="play_a_map('4x4 box'); board.focus()">4x4 box</button><br>
-            <button class="game_button" onclick="play_a_map('5x4 box'); board.focus()">5x4 box</button><br>
-            <button class="game_button" onclick="play_a_map('6x4 box'); board.focus()">6x4 box</button><br>
-            <button class="game_button" onclick="play_a_map('7x4 box'); board.focus()">7x4 box</button><br>
-            <button class="game_button" onclick="play_a_map('SDPC'); board.focus()">SDPC</button><br>
+            <button class="game_button" onclick="play_a_map(); board.focus()">Generate Map</button><br>
             <button class="game_button" onclick="retry(); board.focus()">Retry</button><br>
+            <button class="game_button" onclick="window.open('https://wirelyre.github.io/tetra-tools/pc-solver.html')">Get help from PC finder</button><br>
 
             <div id="winning_requirement">
                 <h3>Winning Requirement:</h3>
                 <p id="winning_requirement2">All Clear</p>
             </div>
 
+            <button id='gamemode_button' class="collapsible" onclick="document.getElementById('gamemode').hidden=!document.getElementById('gamemode').hidden">Game Mode ᐯ</button>
+            <div id="gamemode">
+                <span>map selection:   </span>
+                <select id="input13">
+                </select>
+                <div id="customized" hidden>
+                    <br>
+                    <label> queue </label><input id="input_queue" type="text" size="20" value="I,[IJLOSTZ]p3,">
+                    <br>
+                    <label> map </label>
+                    <textarea name="description" id="field" cols="12" rows="6">
+JJJ_____XX
+JOO____XXX
+LOO___XXXX
+LLL____XXX</textarea>
+                </div>
+            </div>
 
 
         </div>
