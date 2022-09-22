@@ -74,14 +74,20 @@
                 </select>
                 <div id="customized" hidden>
                     <br>
-                    <label> queue </label><input id="input_queue" type="text" size="20" value="I,[IJLOSTZ]p3,">
+                    <label> queue </label>
+                    <input id="input_queue" type="text" size="20" value="I,[IJLOSTZ]p3,">
+                    <div id="queue_error" style='font-family:Calibri,Arial ; font-size:5; color:red;'> </div>
                     <br>
-                    <label> map </label>
+                    <label> field </label>
                     <textarea name="description" id="field" cols="12" rows="6">
 JJJ_____XX
 JOO____XXX
 LOO___XXXX
 LLL____XXX</textarea>
+                    <div id="field_error" style='font-family:Calibri,Arial ; font-size:5; color:red;'> </div>
+                    <br>
+                    <button id='url_but' onclick="gen_url()" style="display: inline;">create url:</button>
+                    <input id="output_url" type="text" size="20" value="abc" readonly>
                 </div>
             </div>
 

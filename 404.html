@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirect</title>
+</head>
+<body>
+    <h1 id="content"></h1>
+    <script>
+        var halfpath = '/downstack-practice/usermode.html/'
+        var fullpath = 'https://himitsuconfidential.github.io/downstack-practice/usermode.html'
+        var name = window.location.pathname
+        var temp = ''
+
+        if (name.startsWith(halfpath)){
+        name = name.slice(halfpath.length)
+        var temp = name.slice(0,name.length - (name.endsWith('/')))
+        }
+        
+        
+        if (temp != ''){
+        sessionStorage.setItem('temp', temp)
+        document.getElementById("content").innerHTML = 'Redirecting'
+        window.location.href = fullpath
+        }
+        else{
+        document.getElementById("content").innerHTML = 'Invalid path'
+        }
+    </script>
+</body>
+</html>

@@ -321,7 +321,7 @@ function set_event_listener(){
     document.onkeydown = (e => {
         console.log('down',e.code)
         var func = Keybind.keydown[e.code];
-        if (['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code) && document.activeElement.tagName != 'TEXTAREA'){
+        if (['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code) && document.activeElement.tagName != 'INPUT' && document.activeElement.tagName != 'TEXTAREA'){
             e.preventDefault()}
         if (document.activeElement.className == 'keybind'){
             document.activeElement.value = e.code
@@ -480,38 +480,69 @@ function retry(){
 }
 // 4.5 customized_map
 function load_map(){
+    document.getElementById('field_error').innerHTML = ''
     var partial_map = document.getElementById('field').value.trim().split('\n').reverse()
+    if (partial_map.length == 1 && partial_map[0] == ''){
+        return true
+    }
+    
     if (partial_map.length >20){
+        document.getElementById('field_error').innerHTML = 'too many lines in field'
         return false}
     for (var line of partial_map){
-        if (line.length != 10){
+        if (line.length != 10 ){
+            document.getElementById('field_error').innerHTML = 'there must be 10 characters in each line'
             return false}}
-    for (var i=0; i<partial_map.length; i++){
-        game.board[i] = [...partial_map[i].replaceAll('X','G').replaceAll('_','N')]}
+    for (var j=0; j<partial_map.length; j++){
+        for (var i=0; i<10; i++){
+            if (partial_map[j][i] == 'X'){
+                game.board[j][i] = 'G'
+            }
+            else if (partial_map[j][i] == '_'){
+                game.board[j][i] = 'N'
+            }
+            else if ('IOTSZJL'.includes(partial_map[j][i])){
+                game.board[j][i] = partial_map[j][i]
+            }
+            else{
+                document.getElementById('field_error').innerHTML = 'only characters of "_XIOTSZJL" allowed'
+                return false
+            }
+        }
+    }
     return true
 }
 function play_a_customized_map(){
     game = new Game()
-    load_map()
+    var is_loaded = load_map()
+    var queue = queue_generator(document.getElementById('input_queue').value)
+    if (!queue || !is_loaded){
+        return false
+    }
     Record.finished_map = clone(game.board)
-    Record.piece_added = queue_generator(document.getElementById('input_queue').value)
+    Record.piece_added = queue
     Config.no_of_piece = Record.piece_added.length
     play()
 }
 
 function queue_generator(expr){
     //example of queue I,[IJLOSTZ]p3; I,*p3
+    document.getElementById('queue_error').innerHTML = ''
     var tokens = expr.split(',')
     var queue = []
+    
     for (var token of tokens){
+        var is_hat = false
         var repeat = 1
         var subqueue = ''
         var splitted_token = token.split('p')
 
         if (splitted_token.length == 2){
-            repeat = parseInt(splitted_token[1])
+            if (splitted_token[1] != ''){
+                repeat = parseInt(splitted_token[1])}
         }
         else if (splitted_token.length != 1){
+            document.getElementById('queue_error').innerHTML = 'invalid format, cannot read ' + token
             return false
         }
 
@@ -522,22 +553,38 @@ function queue_generator(expr){
             var queue_token = splitted_token[0]
         }
 
+        if (queue_token.startsWith('^')){
+            queue_token = queue_token.slice(1)
+            is_hat = true
+        }
+        
+        
         for (var letter of queue_token){
 
             if (letter == '*'){
-                if (splitted_token[0].length != 1){
-                    return false}
+                if (queue_token.length != 1){
+                    document.getElementById('queue_error').innerHTML = 'invalid format, cannot read ' + queue_token
+                    return false
+                }
                 subqueue = 'IJLOSTZ'
             }
+
             else if ('IJLOSTZ'.includes(letter)){
                 subqueue += letter
             }
             else{
+                document.getElementById('queue_error').innerHTML = 'invalid format, cannot read ' + queue_token
                 return false
             }
         }
+
+        if (is_hat){
+            subqueue = [...'IJLOSTZ'].filter(x=>!subqueue.includes(x)).join('')
+        }
+
         if (subqueue.length >0){
             if (repeat > subqueue.length){
+                document.getElementById('queue_error').innerHTML = `bag ${subqueue} has only ${subqueue.length} shapes`
                 return false
             }
             var added = [...subqueue]
@@ -548,6 +595,18 @@ function queue_generator(expr){
     }
     return queue
 }
+
+function gen_url(){
+    //window.location.pathname
+    var first = 'https://himitsuconfidential.github.io/downstack-practice/usermode.html/'
+    var second = document.getElementById('field').value
+    var third = document.getElementById('input_queue').value
+    var output = document.getElementById('output_url')
+    output.value = first + second + '=' +third
+    output.focus()
+    output.select()
+    
+}
 /*
 5. start
 */
@@ -556,7 +615,26 @@ set_event_listener()
 load_setting()
 update_keybind()
 
-setTimeout(load_gamemode,1500)
-setTimeout(play_a_map, 1500)
 
 
+function initialize(){
+    document.getElementById('input13').innerHTML = '<option value="customized">customized</option>'
+    save_gamemode()
+    document.getElementById('customized').hidden = false
+    
+    var temp = sessionStorage.getItem('temp')
+    sessionStorage.removeItem('temp')
+    if (temp != null){
+        var [q,f] = temp.split('=')
+        document.getElementById("input_queue").value = q
+        document.getElementById("field").value = f
+        play_a_map()
+        console.log('loading customized map')
+    }
+    else{
+        setTimeout(load_gamemode,1500)
+        setTimeout(play_a_map, 1500)
+    }
+}
+
+initialize()
