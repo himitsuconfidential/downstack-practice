@@ -522,7 +522,8 @@ function play_a_customized_map(){
     Record.finished_map = clone(game.board)
     Record.piece_added = queue
     Config.no_of_piece = Record.piece_added.length
-    play()
+    play(false)
+    render()
 }
 
 function queue_generator(expr){
