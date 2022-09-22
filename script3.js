@@ -618,16 +618,18 @@ update_keybind()
 
 
 function initialize(){
-    document.getElementById('input13').innerHTML = '<option value="customized">customized</option>'
-    save_gamemode()
-    document.getElementById('customized').hidden = false
+    
     
     var temp = sessionStorage.getItem('temp')
     sessionStorage.removeItem('temp')
     if (temp != null){
-        var [q,f] = temp.split('=')
+        document.getElementById('input13').innerHTML = '<option value="customized">customized</option>'
+        save_gamemode()
+        document.getElementById('customized').hidden = false
+
+        var [f,q] = temp.split('=')
         document.getElementById("input_queue").value = q
-        document.getElementById("field").value = f
+        document.getElementById("field").value = f.match(/.{10}/g).join('\n')
         play_a_map()
         console.log('loading customized map')
     }
