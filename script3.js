@@ -313,7 +313,7 @@ function update_keybind(){
     add_generic_keybind(Customized_key[6], ()=> game.rotate_180())
     add_generic_keybind(Customized_key[7], ()=> game.hold())
     add_generic_keybind(Customized_key[8], ()=> retry())
-    add_generic_keybind(Customized_key[9], ()=> show_ans())
+    add_generic_keybind(Customized_key[9], ()=> play_a_map())
     
 }
 
@@ -459,18 +459,16 @@ function detect_win(){
     if (game.total_piece == 1){
         Config.no_of_trial += 1
     }
-    if (game.total_piece == Config.no_of_piece){
-        
-        if (game.pc){
-            sound['win'].play()
-            play_a_map() 
-            Config.no_of_success += 1
-        }
-        else{
-            sound['lose'].play()
-            retry()
-        }
-            
+    if (game.pc){
+        sound['win'].play()
+        play_a_map() 
+        Config.no_of_success += 1
+    }
+    else if (game.total_piece == Config.no_of_piece){
+
+        sound['lose'].play()
+        retry()
+
     }
 }
 
