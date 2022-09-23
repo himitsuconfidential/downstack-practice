@@ -515,6 +515,7 @@ function play_a_customized_map(){
     var is_loaded = load_map()
     var queue = queue_generator(document.getElementById('input_queue').value)
     if (!queue || !is_loaded){
+        console.log('invalid format')
         return false
     }
     Record.finished_map = clone(game.board)
@@ -532,15 +533,27 @@ function queue_generator(expr){
     
     for (var token of tokens){
         var is_hat = false
+        var is_factorial = false
         var repeat = 1
         var subqueue = ''
         var splitted_token = token.split('p')
 
         if (splitted_token.length == 2){
             if (splitted_token[1] != ''){
-                repeat = parseInt(splitted_token[1])}
+                if (isNaN(splitted_token[1])){
+                    document.getElementById('queue_error').innerHTML = 'invalid format, cannot read ' + splitted_token[1]
+                    return false
+                }
+                repeat = parseInt(splitted_token[1])
+            }
         }
-        else if (splitted_token.length != 1){
+        else if (splitted_token.length == 1){
+            if (splitted_token[0].endsWith('!')){
+                splitted_token[0] = splitted_token[0].slice(0, splitted_token[0].length-1)
+                is_factorial = true
+            }
+        }
+        else{
             document.getElementById('queue_error').innerHTML = 'invalid format, cannot read ' + token
             return false
         }
@@ -580,7 +593,10 @@ function queue_generator(expr){
         if (is_hat){
             subqueue = [...'IJLOSTZ'].filter(x=>!subqueue.includes(x)).join('')
         }
-
+        if (is_factorial){
+            repeat = subqueue.length
+        }
+        console.log(subqueue, repeat)
         if (subqueue.length >0){
             if (repeat > subqueue.length){
                 document.getElementById('queue_error').innerHTML = `bag ${subqueue} has only ${subqueue.length} shapes`
