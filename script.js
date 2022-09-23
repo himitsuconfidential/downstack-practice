@@ -905,6 +905,9 @@ function play_a_map(mode = null){
         else if (i%2 == 1){
             generate_final_map()
             Record.finished_map = clone(game.board)
+            game.drawmode = true
+            Record.piece_added = []
+            Record.board = []
         }
         
     }
