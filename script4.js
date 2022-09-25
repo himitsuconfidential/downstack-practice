@@ -961,8 +961,7 @@ function play_a_comboquad_map(){
 
 function play_a_combotsd_map(){
     play_a_map('combotsd')
-    document.getElementById('winning_requirement1').innerHTML = Config.no_of_piece-1+' Combo'
-    document.getElementById('winning_requirement2').innerHTML = 'Tspin Double at the end'
+    document.getElementById('winning_requirement1').innerHTML = 'Do a Tspin Double'
 }
 
 function detect_win(){
