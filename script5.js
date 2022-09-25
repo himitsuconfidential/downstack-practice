@@ -4,7 +4,7 @@ console.log(game.tetramino, JSON.stringify(game.to_shape()))
 const Keybind = {'keydown':{}, 'keyup':{}}
 var Config = {'das':100, 'arr':0, 'delay':0, 'pressing_left':false, 'pressing_right': false, 'pressing_down': false, 'pressing':{},
 'skim_ind':false, 'mdhole_ind':false, 'unqiue_ind':true, 'smooth_ind':true, 'mode':'prepare', 'no_of_unreserved_piece':7, 'no_of_piece':7,
-'no_of_trial':0, 'no_of_success':0}
+'no_of_trial':0, 'no_of_success':0, 'blank_col':0}
 var Customized_key = ['ArrowLeft','ArrowRight','ArrowDown','Space','KeyZ','KeyX','KeyA','ShiftLeft','KeyR','KeyP']
 var board = document.getElementById('board')
 
@@ -389,6 +389,7 @@ Record={
     ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'],
     ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'],
     ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N']],
+    done_quad: false,
     
 }
 
@@ -725,6 +726,9 @@ function try_all_pieces(){
     shuffle(unseenbag)
     
     var bag = unseenbag.concat(seenbag)
+    if (! Config.unqiue_ind){
+        bag = shuffle([...'IOTJLZS'])
+    }
     for (var piece of bag){
         if (! is_even_distributed(Record.piece_added.concat(piece))) continue
         shuffle(possible_piece_config_table[piece])
@@ -792,6 +796,7 @@ function get_shuffled_holdable_queue(queue){
 // 4.4 shuffle queue and play / restart
 function play(){
     game = new Game()
+    Record.done_quad = false
     game.bag = Record.shuffled_queue.concat(['G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G'])
     game.update()
     game.holdmino = ''
@@ -809,13 +814,30 @@ function generate_final_map(){
     if (Config.mode == 'quad'){
         var height = []
         for (var i=0; i<10; i++)
-            height.push(Math.floor(Math.random()*3)+4)
+            height.push(Math.floor(Math.random()*3)+8)
         var gap_col = Math.floor(Math.random()*10)
-        height[gap_col] = 0
+        height[gap_col] = 4
+
+        var blank_col = Math.floor(Math.random()*9)
+        blank_col += (blank_col >= gap_col)
+        height[blank_col] = 0
+
+        Config.blank_col = blank_col
+        
         for (var j=0; j<20; j++){
             for (var i=0; i<10; i++){
                 if (j < height[i]){
                     game.board[j][i] = 'G'}}}
+
+
+        game.board[4][blank_col] = 'G'
+        game.board[5][blank_col] = 'G'
+        game.board[6][blank_col] = 'G'
+        game.board[7][blank_col] = 'G'
+        game.board[8][blank_col] = 'N'
+        game.board[9][blank_col] = 'N'
+        game.board[10][blank_col] = 'N'
+        
     }
 }
 count = 0
@@ -871,9 +893,15 @@ function play_a_map(mode = null){
             var queue = [...Record.piece_added].reverse()	
             if (Config.mode == 'quad'){	
                 queue.push('I')}		
-            Record.shuffled_queue = get_shuffled_holdable_queue(queue)	
-            if (Record.shuffled_queue.length >0){	
-                break}
+            Record.shuffled_queue = get_shuffled_holdable_queue(queue)
+            if (mode == 'quad'){
+                if (Record.shuffled_queue.length >0 && game.board[4][Config.blank_col] == 'G'){	//only works for quad
+                    break}
+            }
+            else{
+                if (Record.shuffled_queue.length >0 ){
+                    break}
+            }
         }
         else if (i%2 == 1){
             generate_final_map()
@@ -899,27 +927,28 @@ function play_a_map(mode = null){
 function play_a_quad_map(){
     play_a_map('quad')
     document.getElementById('winning_requirement1').innerHTML = 'Do a Quad'
+    document.getElementById('winning_requirement2').innerHTML = 'Leave column '+(Config.blank_col+1)+'empty at the end'
 }
 
 function detect_win(){
     if (game.total_piece == 1){
         Config.no_of_trial += 1
     }
-    if (Config.mode == 'quad' && game.line_clear == 4){
+    if (game.line_clear == 4) Record.done_quad = true
+    if (game.total_piece == Config.no_of_piece){
+        
+        if (Config.mode == 'quad' && Record.done_quad && game.board.every(row=>row[Config.blank_col]=="N")){
             sound['win'].play()
-            play_a_map()
+            play_a_quad_map()
             Config.no_of_success += 1
         }
-
-    else if (game.total_piece == Config.no_of_piece){
-        
-        
-        
+        else{
             sound['lose'].play()
             retry()
-        
+        }
             
     }
+    
 }
 
 function retry(){
