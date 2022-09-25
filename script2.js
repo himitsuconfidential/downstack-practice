@@ -407,20 +407,20 @@ function add_random_line(){
     var row_index = Math.floor(Math.random()*(max_height+2))
     Record.added_line = []
     var rng = Math.random()
-    if (rng<0.1){
+    if (rng<0.05){
         add_line(row_index)
         add_line(row_index+1)
         add_line(row_index+2)
     }
-    else if (rng<0.15 && row_index < max_height+1){
+    else if (rng<0.07 && row_index < max_height+1){
         add_line(row_index)
         add_line(row_index+2)
+    }
+    else if (rng<0.15){
+        add_line(row_index)
+        add_line(row_index+1)
     }
     else if (rng<0.3){
-        add_line(row_index)
-        add_line(row_index+1)
-    }
-    else if (rng<0.6){
         add_line(row_index)
     }
 }
@@ -441,16 +441,16 @@ function add_random_line_less_skim(){
     var row_index = garbage_height
     Record.added_line = []
     var rng = Math.random()
-    if (rng<0.1){
+    if (rng<0.05){
         add_line(row_index)
         add_line(row_index+1)
         add_line(row_index+2)
     }
-    else if (rng<0.3){
+    else if (rng<0.15){
         add_line(row_index)
         add_line(row_index+1)
     }
-    else if (rng<0.6){
+    else if (rng<0.3){
         add_line(row_index)
     }
 }
@@ -656,6 +656,9 @@ function is_even_distributed(bag){
             return false
         last_piece = piece
     }
+    if (counter.I + counter.J + counter.L >4){
+        return false
+    }
     return true
 }
 
@@ -709,33 +712,43 @@ function try_a_move(){
         return false}
 }
 
+function is_good_queue(queue){
+    var accum = []
+    var count = 1
+    for (var ele of queue){
+        if (accum.includes(ele)){
+            accum = []
+            count ++
+        }
+        accum.push(ele)
+    }
+    return count <= 2
+}
+
 function get_shuffled_holdable_queue(queue){
-    var result = []
+    
     var size = queue.length
     if (2<= size && size<=7){
-        var rng = Math.floor(Math.random()*reverse_hold_table[size].length)
-        var selected_table = reverse_hold_table[size][rng]
-        for (var pointer of selected_table){
-            result.push(queue[pointer])}
+        var selected_table = reverse_hold_table[size]
+        shuffle(selected_table)
+        for (var selected_row of selected_table){
+            var result = []
+            for (var pointer of selected_row){
+                result.push(queue[pointer])
+            }
+            if (is_good_queue(result)){
+                
+                return result
+            }
+        }
+        
     }
-    return result
+    return []
 }
 // 4.4 shuffle queue and play / restart
-function play(retry = true){
+function play(){
     game = new Game()
-    if (retry)
-        {}
-
-    
-    if (! retry){
-        var queue = [...Record.piece_added].reverse()
-        if (Config.mode == 'comboquad'){
-            queue.push('I')}
-        else if (Config.mode == 'combotsd'){
-            queue.push('T')}
-        Record.shuffled_queue = get_shuffled_holdable_queue(queue)}
-    if (Record.piece_added){
-        game.bag = Record.shuffled_queue.concat(['G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G'])}
+    game.bag = Record.shuffled_queue.concat(['G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G'])
     game.update()
     game.holdmino = ''
     if ((Record.board.length)>0){
@@ -789,12 +802,23 @@ function play_a_map(mode = null){
     game.drawmode = true
     Record.piece_added = []
     Record.board = []
-    for (var i=0; i<99; i++) {
+    for (var i=0; i<999; i++) {
         if (generate_a_ds_map(Config.no_of_unreserved_piece) && game.get_max_height() < 17){
-            break}
+            var queue = [...Record.piece_added].reverse()
+            if (Config.mode == 'comboquad'){
+                queue.push('I')}
+            else if (Config.mode == 'combotsd'){
+                queue.push('T')}
+            Record.shuffled_queue = get_shuffled_holdable_queue(queue)
+            if (Record.shuffled_queue.length >0){
+                break}
+        }
         else if (i%2 == 1){
             generate_final_map()
             Record.finished_map = clone(game.board)
+            game.drawmode = true
+            Record.piece_added = []
+            Record.board = []
         }
     }
             

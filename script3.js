@@ -417,11 +417,11 @@ function get_shuffled_holdable_queue(queue){
     return result
 }
 // 4.4 shuffle queue and play / restart
-function play(retry = true){
+function play(){
     game = new Game()
     game.board = clone(Record.finished_map)
-    if (Record.piece_added){
-        game.bag = Record.piece_added.concat(['G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G'])}
+
+    game.bag = Record.piece_added.concat(['G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G'])
     game.update()
     game.holdmino = ''
     
@@ -446,7 +446,7 @@ function play_a_map(mode = null){
     Record.piece_added = [...random_choose(jsondata[mode]['queue'])]
 
 
-    play(false)
+    play()
     render()
 
 }

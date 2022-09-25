@@ -617,10 +617,9 @@ function is_few_non_cheese_hole(){
                 h=row_idx}}
         height.push(h)
     }
-
+    if (! is_smooth(height))
+    return false
     if (Config.smooth_ind){
-        if (! is_smooth(height))
-         return false
         var height_copy = [...height].sort(function(a, b){return a - b})
         if (height_copy[8] - height_copy[1] > 5)
             return false
@@ -706,6 +705,9 @@ function is_even_distributed(bag){
             return false
         last_piece = piece
     }
+    if (counter.I + counter.J + counter.L >4){
+        return false
+    }
     return true
 }
 
@@ -758,33 +760,46 @@ function try_a_move(){
         return false}
 }
 
+function is_good_queue(queue){
+    var accum = []
+    var count = 1
+    for (var ele of queue){
+        if (accum.includes(ele)){
+            accum = []
+            count ++
+        }
+        accum.push(ele)
+    }
+    return count <= 2
+}
+
 function get_shuffled_holdable_queue(queue){
-    var result = []
+    
     var size = queue.length
     if (2<= size && size<=7){
-        var rng = Math.floor(Math.random()*reverse_hold_table[size].length)
-        var selected_table = reverse_hold_table[size][rng]
-        for (var pointer of selected_table){
-            result.push(queue[pointer])}
+        var selected_table = reverse_hold_table[size]
+        shuffle(selected_table)
+        for (var selected_row of selected_table){
+            var result = []
+            for (var pointer of selected_row){
+                result.push(queue[pointer])
+            }
+            if (is_good_queue(result)){
+                
+                return result
+            }
+        }
+        
     }
-    return result
+    return []
 }
+
 // 4.4 shuffle queue and play / restart
-function play(retry = true){
+function play(){
     game = new Game()
-    if (retry)
-        {}
 
     
-    if (! retry){
-        var queue = [...Record.piece_added].reverse()
-        if (Config.mode == 'comboquad'){
-            queue.push('I')}
-        else if (Config.mode == 'combotsd'){
-            queue.push('T')}
-        Record.shuffled_queue = get_shuffled_holdable_queue(queue)}
-    if (Record.piece_added){
-        game.bag = Record.shuffled_queue.concat(['G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G'])}
+    game.bag = Record.shuffled_queue.concat(['G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G'])
     game.update()
     game.holdmino = ''
     if ((Record.board.length)>0){
@@ -831,18 +846,19 @@ function generate_final_map(){
             height.push(Math.floor(Math.random()*3)+2)
         var tsd_col = Math.floor(Math.random()*8)+1
         height[tsd_col] = 0
-        height[tsd_col + 1] = 1
-        height[tsd_col - 1] = 1
-        for (var j=0; j<20; j++){
-            for (var i=0; i<10; i++){
-                if (j < height[i]){
-                    game.board[j][i] = 'G'}}}
         if (tsd_col == 1){
             is_left = false}
         else if (tsd_col == 8){
             is_left = true}
         else{
             is_left = Math.floor(Math.random()*2)}
+        var sign_left = is_left==1? 1:-1
+        height[tsd_col + (sign_left)] = 1
+        for (var j=0; j<20; j++){
+            for (var i=0; i<10; i++){
+                if (j < height[i]){
+                    game.board[j][i] = 'G'}}}
+        game.board[1][tsd_col - (sign_left)] = 'N'
         
         if (is_left){
             game.board[2][tsd_col-1] = 'G'
@@ -856,8 +872,24 @@ function generate_final_map(){
             game.board[1][tsd_col+2] = 'G'
             game.board[2][tsd_col+2] = 'G'
         }
+
+        var lines_add = Math.floor(Math.random()*3)
+        var is_tsd_col = Math.floor(Math.random()*2)
+        var col_add = (is_tsd_col == 1)? tsd_col: Math.floor(Math.random()*10)
+        //col_add cannot be the same as overhang
+        if (col_add == tsd_col-1*sign_left || col_add == tsd_col-2*sign_left){
+            col_add = tsd_col
+        }
+        game.board[2][col_add]='N'
+        for (var row_idx=0; row_idx<lines_add; row_idx++){
+            add_line(row_idx)
+            game.board[row_idx][col_add]='N'
+        }
+        
+        Record.added_line=[]
     }
 }
+last_info = 'null'
 
 function generate_a_ds_map(move){
     
@@ -870,6 +902,12 @@ function generate_a_ds_map(move){
         if (success_generate){
             return true}
         else{
+            if (Config.skim_ind || Config.mode == 'combotsd'){
+            var info = `${game.tetramino} ${game.x} ${game.y} ${game.orientation}`
+            if (info == last_info ) 
+                {trial += 2}
+            last_info = info
+            }
             Record.board.length = Config.no_of_unreserved_piece-move
             Record.piece_added.length = Config.no_of_unreserved_piece-move
             if (Record.board.length > 0){
@@ -896,12 +934,20 @@ function play_a_map(mode = null){
     Record.piece_added = []
     Record.board = []
     
-    for (var i=0; i<99; i++) {
+    for (var i=0; i<999; i++) {
         if (i==50){
             Config.skim_ind = false
         }
-        if (generate_a_ds_map(Config.no_of_unreserved_piece) && game.get_max_height() < 17){
-            break}
+        if (generate_a_ds_map(Config.no_of_unreserved_piece) && game.get_max_height() < 17 ){
+            var queue = [...Record.piece_added].reverse()
+            if (Config.mode == 'comboquad'){
+                queue.push('I')}
+            else if (Config.mode == 'combotsd'){
+                queue.push('T')}
+            Record.shuffled_queue = get_shuffled_holdable_queue(queue)
+            if (Record.shuffled_queue.length >0){
+                break}
+        }
         else if (i%2 == 1){
             generate_final_map()
             Record.finished_map = clone(game.board)
@@ -911,10 +957,10 @@ function play_a_map(mode = null){
         }
         
     }
-            
+      
     Config.skim_ind = document.getElementById('input14').checked
     
-    play(false)
+    play()
     
     game.drawmode = false
     render()
