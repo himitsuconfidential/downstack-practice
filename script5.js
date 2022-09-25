@@ -389,8 +389,6 @@ Record={
     ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'],
     ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'],
     ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N']],
-    done_quad: false,
-    done_tsd:false
     
 }
 
@@ -695,11 +693,8 @@ function is_even_distributed(bag){
     if (Config.unqiue_ind){
         limit = {I:1, O:1, T:1, J:1, L:1, Z:1, S:1}
     }
-    if (Config.mode == 'tsdquad'){
-        limit.I -= 1
-        limit.T -= 1}
-    else if (Config.mode == 'tsd'){
-        limit.T -= 1}
+    if (Config.mode == 'quad'){
+        limit.I -= 1}
     for (var piece of bag){
         
         counter[piece] += 1
@@ -797,8 +792,6 @@ function get_shuffled_holdable_queue(queue){
 // 4.4 shuffle queue and play / restart
 function play(){
     game = new Game()
-    Record.done_quad = false
-    Record.done_tsd = false
     game.bag = Record.shuffled_queue.concat(['G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G'])
     game.update()
     game.holdmino = ''
@@ -812,59 +805,17 @@ function play(){
 }
 // 4.5 generate the final map and develop the progression
 function generate_final_map(){
-    
     game = new Game()
-
-    
-    if (true){
+    if (Config.mode == 'quad'){
         var height = []
         for (var i=0; i<10; i++)
-            height.push(Math.floor(Math.random()*4)+2)
-        var tsd_col = Math.floor(Math.random()*8)+1
-        height[tsd_col] = 0
-        if (tsd_col == 1){
-            is_left = false}
-        else if (tsd_col == 8){
-            is_left = true}
-        else{
-            is_left = Math.floor(Math.random()*2)}
-        var sign_left = is_left==1? 1:-1
-        height[tsd_col + (sign_left)] = 1
+            height.push(Math.floor(Math.random()*3)+4)
+        var gap_col = Math.floor(Math.random()*10)
+        height[gap_col] = 0
         for (var j=0; j<20; j++){
             for (var i=0; i<10; i++){
                 if (j < height[i]){
                     game.board[j][i] = 'G'}}}
-        game.board[1][tsd_col - (sign_left)] = 'N'
-        
-        if (is_left){
-            game.board[2][tsd_col-1] = 'G'
-            game.board[0][tsd_col-2] = 'G'
-            game.board[1][tsd_col-2] = 'G'
-            game.board[2][tsd_col-2] = 'G'
-        }
-        else{
-            game.board[2][tsd_col+1] = 'G'
-            game.board[0][tsd_col+2] = 'G'
-            game.board[1][tsd_col+2] = 'G'
-            game.board[2][tsd_col+2] = 'G'
-        }
-
-        var lines_add = (Config.mode == 'tsd')? Math.floor(Math.random()*3): 4
-        var is_tsd_col = Math.floor(Math.random()*2)
-        var col_add = (is_tsd_col == 1)? tsd_col: Math.floor(Math.random()*10)
-        //col_add cannot be the same as overhang
-        if (col_add == tsd_col-1*sign_left || col_add == tsd_col-2*sign_left){
-            col_add = tsd_col
-        }
-        game.board[2][col_add]='N'
-        game.board[3][col_add]='N'
-        for (var row_idx=0; row_idx<lines_add; row_idx++){
-            add_line(row_idx)
-            game.board[row_idx][col_add]='N'
-        }
-        
-        Record.added_line=[]
-
     }
 }
 count = 0
@@ -903,7 +854,7 @@ function play_a_map(mode = null){
     
     game = new Game()
 
-    Config.no_of_unreserved_piece = (mode == 'tsd')?  Config.no_of_piece - 1: Config.no_of_piece - 2
+    Config.no_of_unreserved_piece = Config.no_of_piece - ['quad'].includes(mode)
     Config.mode = mode
     
     generate_final_map()
@@ -918,11 +869,8 @@ function play_a_map(mode = null){
         }
         if (generate_a_ds_map(Config.no_of_unreserved_piece) && game.get_max_height() < 17){
             var queue = [...Record.piece_added].reverse()	
-            if (Config.mode == 'tsdquad'){	
-                queue.push('T')
-                queue.push('I')}	
-            else if (Config.mode == 'tsd'){	
-                queue.push('T')}	
+            if (Config.mode == 'quad'){	
+                queue.push('I')}		
             Record.shuffled_queue = get_shuffled_holdable_queue(queue)	
             if (Record.shuffled_queue.length >0){	
                 break}
@@ -947,35 +895,31 @@ function play_a_map(mode = null){
     // update_win_text()
 }
 
-function play_a_tsd_map(){
-    play_a_map('tsd')
-    document.getElementById('winning_requirement1').innerHTML = 'Do a Tspin Double'
-}
 
-function play_a_tsdquad_map(){
-    play_a_map('tsdquad')
-    document.getElementById('winning_requirement1').innerHTML = 'Do a Tspin Double and Quad'
+function play_a_quad_map(){
+    play_a_map('quad')
+    document.getElementById('winning_requirement1').innerHTML = 'Do a Quad'
 }
 
 function detect_win(){
     if (game.total_piece == 1){
-        Config.no_of_trial += 1}
-    console.log(Config.mode,Record.done_tsd,Record.done_quad)
-    if (game.line_clear == 2 && game.b2b >= 0) Record.done_tsd = true
-    if (game.line_clear == 4) Record.done_quad = true
-    if ((Config.mode == 'tsdquad' && Record.done_tsd && Record.done_quad) ||
-        (Config.mode == 'tsd' && Record.done_tsd)){
+        Config.no_of_trial += 1
+    }
+    if (Config.mode == 'quad' && game.line_clear == 4){
             sound['win'].play()
             play_a_map()
             Config.no_of_success += 1
         }
 
     else if (game.total_piece == Config.no_of_piece){
-
+        
+        
+        
             sound['lose'].play()
-            retry()   
+            retry()
+        
+            
     }
-    
 }
 
 function retry(){
@@ -998,6 +942,6 @@ load_setting()
 load_gamemode()
 update_keybind()
 board.focus()
-play_a_tsd_map()
+play_a_quad_map()
 render()
 
