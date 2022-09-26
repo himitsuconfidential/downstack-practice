@@ -3,7 +3,7 @@ var game = new Game();
 console.log(game.tetramino, JSON.stringify(game.to_shape()))
 const Keybind = {'keydown':{}, 'keyup':{}}
 var Config = {'das':100, 'arr':0, 'delay':0, 'pressing_left':false, 'pressing_right': false, 'pressing_down': false, 'pressing':{},
-'skim_ind':false, 'mdhole_ind':false, 'unqiue_ind':true, 'smooth_ind':true, 'mode':'prepare', 'no_of_unreserved_piece':7, 'no_of_piece':7,
+'skim_ind':false, 'mdhole_ind':false, 'unqiue_ind':true, 'smooth_ind':true, 'donate_ind':false, 'mode':'prepare', 'no_of_unreserved_piece':7, 'no_of_piece':7,
 'no_of_trial':0, 'no_of_success':0}
 var Customized_key = ['ArrowLeft','ArrowRight','ArrowDown','Space','KeyZ','KeyX','KeyA','ShiftLeft','KeyR','KeyP']
 var board = document.getElementById('board')
@@ -66,6 +66,7 @@ function load_gamemode(){
     document.getElementById('input15').checked = Config.mdhole_ind
     document.getElementById('input16').checked = Config.unqiue_ind
     document.getElementById('input17').checked = Config.smooth_ind
+    document.getElementById('input18').checked = Config.donate_ind
 }
 
 
@@ -101,6 +102,7 @@ function save_gamemode(){
     Config.mdhole_ind = document.getElementById('input15').checked 
     Config.unqiue_ind = document.getElementById('input16').checked
     Config.smooth_ind = document.getElementById('input17').checked
+    Config.donate_ind = document.getElementById('input18').checked
 }
 
 /*
@@ -359,6 +361,7 @@ function set_event_listener(){
     document.getElementById('input15').onchange = e=>{save_gamemode()}
     document.getElementById('input16').onchange = e=>{save_gamemode()}
     document.getElementById('input17').onchange = e=>{save_gamemode()}
+    document.getElementById('input18').onchange = e=>{save_gamemode()}
 }
 /*
 4. map generation
@@ -819,7 +822,7 @@ function generate_final_map(){
     if (true){
         var height = []
         for (var i=0; i<10; i++)
-            height.push(Math.floor(Math.random()*4)+2)
+            height.push(Math.floor(Math.random()*3)+2)
         var tsd_col = Math.floor(Math.random()*8)+1
         height[tsd_col] = 0
         if (tsd_col == 1){
@@ -850,12 +853,20 @@ function generate_final_map(){
         }
 
         var lines_add = (Config.mode == 'tsd')? Math.floor(Math.random()*3): 4
-        var is_tsd_col = Math.floor(Math.random()*2)
+        var is_tsd_col = (Config.donate_ind)? 0: Math.floor(Math.random()*2)
         var col_add = (is_tsd_col == 1)? tsd_col: Math.floor(Math.random()*10)
         //col_add cannot be the same as overhang
         if (col_add == tsd_col-1*sign_left || col_add == tsd_col-2*sign_left){
             col_add = tsd_col
         }
+        if (Config.donate_ind && col_add == tsd_col){
+            col_add = tsd_col+1*sign_left
+        }
+        if (Config.donate_ind && lines_add==0){
+            lines_add = 2
+        }
+        console.log(Config.donate_ind)
+
         game.board[2][col_add]='N'
         game.board[3][col_add]='N'
         for (var row_idx=0; row_idx<lines_add; row_idx++){
@@ -956,26 +967,42 @@ function play_a_tsdquad_map(){
     play_a_map('tsdquad')
     document.getElementById('winning_requirement1').innerHTML = 'Do a Tspin Double and Quad'
 }
+function all_grounded(){
+    for (var col_idx=0; col_idx<10; col_idx++) {
+        var is_grounded = true
+        for (var row_idx=0; row_idx<20; row_idx++){
+            if (game.board[row_idx][col_idx] != 'N'){
+                if (!is_grounded){
+                return false}
 
+            }
+            else{
+                is_grounded = false}
+        }
+    }
+    return true
+}
 function detect_win(){
+
     if (game.total_piece == 1){
         Config.no_of_trial += 1}
     console.log(Config.mode,Record.done_tsd,Record.done_quad)
     if (game.line_clear == 2 && game.b2b >= 0) Record.done_tsd = true
     if (game.line_clear == 4) Record.done_quad = true
-    if ((Config.mode == 'tsdquad' && Record.done_tsd && Record.done_quad) ||
-        (Config.mode == 'tsd' && Record.done_tsd)){
-            sound['win'].play()
-            play_a_map()
-            Config.no_of_success += 1
+
+    if (game.total_piece == Config.no_of_piece){
+        if ((Config.mode == 'tsdquad' && Record.done_tsd && Record.done_quad && all_grounded()) ||
+            (Config.mode == 'tsd' && Record.done_tsd && all_grounded() )){
+                sound['win'].play()
+                play_a_map()
+                Config.no_of_success += 1
+            }
+
+        else{
+                sound['lose'].play()
+                retry()   
         }
-
-    else if (game.total_piece == Config.no_of_piece){
-
-            sound['lose'].play()
-            retry()   
     }
-    
 }
 
 function retry(){
