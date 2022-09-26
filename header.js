@@ -440,8 +440,9 @@ class Game{
                 this.y = previous_y
             }
         
-            this.orientation = previous_orientation
+            
         }
+        this.orientation = previous_orientation
         return false
     }
 
