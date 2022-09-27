@@ -3,7 +3,8 @@ var game = new Game();
 console.log(game.tetramino, JSON.stringify(game.to_shape()))
 const Keybind = {'keydown':{}, 'keyup':{}}
 var Config = {'das':100, 'arr':0, 'delay':0, 'pressing_left':false, 'pressing_right': false, 'pressing_down': false, 'pressing':{},
-'skim_ind':false, 'mdhole_ind':false, 'unqiue_ind':true, 'smooth_ind':true, 'donate_ind':false, 'mode':'prepare', 'no_of_unreserved_piece':7, 'no_of_piece':7,
+'skim_ind':false, 'mdhole_ind':false, 'unqiue_ind':true, 'smooth_ind':true, 'donate_ind':false, 'zero9_ind': false, 'auto_next_ind':true,
+'mode':'prepare', 'no_of_unreserved_piece':7, 'no_of_piece':7,
 'no_of_trial':0, 'no_of_success':0}
 var Customized_key = ['ArrowLeft','ArrowRight','ArrowDown','Space','KeyZ','KeyX','KeyA','ShiftLeft','KeyR','KeyP']
 var board = document.getElementById('board')
@@ -47,6 +48,8 @@ function load_setting(){
             if (! (Config.arr>=0 && Config.arr<=100)){
                 Config.arr = 0
             }
+            Config.auto_next_ind = localStorage.getItem('auto_next_ind') != 'false'
+            
         }
     }
     catch(err){
@@ -58,6 +61,7 @@ function load_setting(){
     }
     document.getElementById('input11').value = Config.das
     document.getElementById('input12').value = Config.arr
+    document.getElementById('input12.1').checked = Config.auto_next_ind
 }
 
 function load_gamemode(){
@@ -67,6 +71,7 @@ function load_gamemode(){
     document.getElementById('input16').checked = Config.unqiue_ind
     document.getElementById('input17').checked = Config.smooth_ind
     document.getElementById('input18').checked = Config.donate_ind
+    document.getElementById('input19').checked = Config.zero9_ind
 }
 
 
@@ -85,7 +90,10 @@ function save_setting(){
         alert('ARR should be between 0 to 100')
         Config.arr = 0
     }
+    
+    Config.auto_next_ind = document.getElementById('input12.1').checked
     update_keybind()
+    localStorage.setItem('auto_next_ind', Config.auto_next_ind) 
     localStorage.setItem('Customized_key',JSON.stringify(Customized_key))
     localStorage.setItem('das',Config.das)
     localStorage.setItem('arr',Config.arr)
@@ -103,6 +111,7 @@ function save_gamemode(){
     Config.unqiue_ind = document.getElementById('input16').checked
     Config.smooth_ind = document.getElementById('input17').checked
     Config.donate_ind = document.getElementById('input18').checked
+    Config.zero9_ind = document.getElementById('input19').checked
 }
 
 /*
@@ -356,12 +365,14 @@ function set_event_listener(){
     })
     document.getElementById('input11').oninput = e=>{save_setting()}
     document.getElementById('input12').oninput = e=>{save_setting()}
+    document.getElementById('input12.1').onchange = e=>{save_setting()}
     document.getElementById('input13').oninput = e=>{save_gamemode()}
     document.getElementById('input14').onchange = e=>{save_gamemode()}
     document.getElementById('input15').onchange = e=>{save_gamemode()}
     document.getElementById('input16').onchange = e=>{save_gamemode()}
     document.getElementById('input17').onchange = e=>{save_gamemode()}
     document.getElementById('input18').onchange = e=>{save_gamemode()}
+    document.getElementById('input19').onchange = e=>{save_gamemode()}
 }
 /*
 4. map generation
@@ -859,13 +870,20 @@ function generate_final_map(){
         if (col_add == tsd_col-1*sign_left || col_add == tsd_col-2*sign_left){
             col_add = tsd_col
         }
-        if (Config.donate_ind && col_add == tsd_col){
+        if (Config.zero9_ind){
+            col_add = 0
+        }
+        else if (Config.donate_ind && col_add == tsd_col){
             col_add = tsd_col+1*sign_left
         }
-        if (Config.donate_ind && lines_add==0){
+
+        if (Config.zero9_ind){
+            lines_add = 4
+        }
+        else if (Config.donate_ind && lines_add==0){
             lines_add = 2
         }
-        console.log(Config.donate_ind)
+        
 
         game.board[2][col_add]='N'
         game.board[3][col_add]='N'
@@ -994,7 +1012,8 @@ function detect_win(){
         if ((Config.mode == 'tsdquad' && Record.done_tsd && Record.done_quad && all_grounded()) ||
             (Config.mode == 'tsd' && Record.done_tsd && all_grounded() )){
                 sound['win'].play()
-                play_a_map()
+                if (Config.auto_next_ind){
+                    play_a_map()}
                 Config.no_of_success += 1
             }
 

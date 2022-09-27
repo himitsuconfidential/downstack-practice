@@ -3,7 +3,8 @@ var game = new Game();
 console.log(game.tetramino, JSON.stringify(game.to_shape()))
 const Keybind = {'keydown':{}, 'keyup':{}}
 var Config = {'das':100, 'arr':0, 'delay':0, 'pressing_left':false, 'pressing_right': false, 'pressing_down': false, 'pressing':{},
-'skim_ind':false, 'mdhole_ind':false, 'unqiue_ind':true, 'smooth_ind':true, 'mode':'prepare', 'no_of_unreserved_piece':7, 'no_of_piece':7,
+'skim_ind':false, 'mdhole_ind':false, 'unqiue_ind':true, 'smooth_ind':true, 'auto_next_ind':true,
+'mode':'prepare', 'no_of_unreserved_piece':7, 'no_of_piece':7,
 'no_of_trial':0, 'no_of_success':0}
 var Customized_key = ['ArrowLeft','ArrowRight','ArrowDown','Space','KeyZ','KeyX','KeyA','ShiftLeft','KeyR','KeyP']
 var board = document.getElementById('board')
@@ -47,6 +48,8 @@ function load_setting(){
             if (! (Config.arr>=0 && Config.arr<=100)){
                 Config.arr = 0
             }
+            Config.auto_next_ind = localStorage.getItem('auto_next_ind') != 'false'
+            
         }
     }
     catch(err){
@@ -58,6 +61,7 @@ function load_setting(){
     }
     document.getElementById('input11').value = Config.das
     document.getElementById('input12').value = Config.arr
+    document.getElementById('input12.1').checked = Config.auto_next_ind
 }
 
 function load_gamemode(){
@@ -84,7 +88,10 @@ function save_setting(){
         alert('ARR should be between 0 to 100')
         Config.arr = 0
     }
+    
+    Config.auto_next_ind = document.getElementById('input12.1').checked
     update_keybind()
+    localStorage.setItem('auto_next_ind', Config.auto_next_ind) 
     localStorage.setItem('Customized_key',JSON.stringify(Customized_key))
     localStorage.setItem('das',Config.das)
     localStorage.setItem('arr',Config.arr)
@@ -352,8 +359,10 @@ function set_event_listener(){
         }
 
     })
+
     document.getElementById('input11').oninput = e=>{save_setting()}
     document.getElementById('input12').oninput = e=>{save_setting()}
+    document.getElementById('input12.1').onchange = e=>{save_setting()}
     document.getElementById('input13').oninput = e=>{save_gamemode()}
     document.getElementById('input14').onchange = e=>{save_gamemode()}
     document.getElementById('input15').onchange = e=>{save_gamemode()}
@@ -1004,7 +1013,8 @@ function detect_win(){
         (Config.mode == 'comboquad' && game.line_clear == 4)||
         (Config.mode == 'combotsd' && game.line_clear == 2 && game.b2b >= 0))){
             sound['win'].play()
-            play_a_map()
+            if (Config.auto_next_ind){
+                play_a_map()}
             Config.no_of_success += 1
         }
         else{
