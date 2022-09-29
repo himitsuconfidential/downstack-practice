@@ -309,7 +309,7 @@ input:focus {
     display: inline;
 }
 
-#input_queue {
+#gamemode #input_queue {
     width: 8rem;
 }
 
@@ -319,6 +319,6 @@ input:focus {
     outline: 0.2rem solid rgb(66, 175, 225);  
 }
 
-#output_url {
+#gamemode #output_url {
     width: 8rem;
 }
