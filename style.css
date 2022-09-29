@@ -308,3 +308,17 @@ input:focus {
 #url_but {
     display: inline;
 }
+
+#input_queue {
+    width: 8rem;
+}
+
+#field {
+    color: #dcddde;
+    background-color:rgba(0, 0, 0, 0.2);
+    outline: 0.2rem solid rgb(66, 175, 225);  
+}
+
+#output_url {
+    width: 8rem;
+}
