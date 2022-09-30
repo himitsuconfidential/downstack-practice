@@ -41,7 +41,7 @@ const sound={
 function play_sound(){
     if (game.combo >= 0){
         console.log('sing', game.combo)
-        sound[game.combo].cloneNode().play()
+        sound[Math.min(6,game.combo)].cloneNode().play()
     }
 }
 
