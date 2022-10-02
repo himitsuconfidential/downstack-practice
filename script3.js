@@ -648,7 +648,7 @@ function pcfinder(){
     console.log(field.length, JSON.stringify(field))
     for (var i=0; i<10; i++) field.push(0)
     console.log(field.length, JSON.stringify(field))
-    var queue = Record.piece_added.join('')
+    var queue = [...game.holdmino].filter(x=>x!='G').join('') + game.bag.filter(x=>x!='G').join('')
     
     var fumen= encode_simple(field,queue)
     console.log(fumen)
