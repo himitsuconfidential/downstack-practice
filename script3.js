@@ -651,8 +651,9 @@ function pcfinder(){
     var queue = [...game.holdmino].filter(x=>x!='G').join('') + game.bag.filter(x=>x!='G').join('')
     
     var fumen= encode_simple(field,queue)
+
     console.log(fumen)
-    window.open(url+'?fumen='+ fumen)
+    window.open(url+'?fumen='+ encodeURIComponent(fumen))
 }
 
 /*
