@@ -28,7 +28,7 @@ const sound={
 function play_sound(){
     if (game.combo >= 0){
         console.log('sing', game.combo)
-        sound[game.combo].cloneNode().play()
+        sound[Math.min(6,game.combo)].cloneNode().play()
     }
 }
 
@@ -661,7 +661,7 @@ function is_few_non_cheese_hole(){
             no_of_non_cheese_holes += hole
         }
     }
-    return no_of_non_cheese_holes <= Config.no_of_unreserved_piece - Record.piece_added.length - (!Config.mdhole_ind)
+    return no_of_non_cheese_holes <= Config.no_of_unreserved_piece - Record.piece_added.length - (!Config.mdhole_ind) + 2*(Config.no_of_unreserved_piece<2)
 }
 
 // 4.3 try to add pieces
@@ -711,11 +711,14 @@ function is_even_distributed(bag){
         limit.T -= 2}
     else if (Config.mode == 'cspin'){
         limit.T -= 2}
+    else if (Config.mode == 'cspinquad'){
+        limit.T -= 2
+        limit.I -= 1}
     for (var piece of bag){
         
         counter[piece] += 1
-        if (counter[piece] > limit[piece])
-            return false
+        if (counter[piece] > limit[piece]){
+            return false}
         if (piece == last_piece)
             return false
         last_piece = piece
@@ -729,6 +732,7 @@ function is_even_distributed(bag){
 function try_all_pieces(){
     var seenbag = []
     var unseenbag = []
+    
     for (var piece of 'IOTJLZS'){
         if (Record.piece_added.includes(piece)){
             seenbag.push(piece)
@@ -913,7 +917,7 @@ function generate_final_map(){
         for (var i=0; i<10; i++)
             height.push(Math.floor(Math.random()*3)+5)
 
-        //create dt hole
+        //create cspin hole
         var is_right = Math.floor(Math.random()*2) == 0 //overhang is left?
         if (is_right){
             var tsd_col = Math.floor(Math.random()*7)+1 //1 to 7
@@ -986,6 +990,84 @@ function generate_final_map(){
         Record.added_line=[]
 
     }
+    else if (Config.mode=='cspinquad'){
+        //create random landsacpe
+        var height = []
+        for (var i=0; i<10; i++)
+            height.push(Math.floor(Math.random()*3)+5)
+
+        //create cspin hole
+        var is_right = Math.floor(Math.random()*2) == 0 //overhang is left?
+        if (is_right){
+            var tsd_col = Math.floor(Math.random()*7)+1 //1 to 7
+            if (Math.floor(Math.random()*2) == 0){
+                for (var i=0; i<10; i++){
+                    height[i]+=1
+                }
+                height[tsd_col-1]-=1
+                height[tsd_col]-=1
+            }
+            height[tsd_col-1]-=1
+            height[tsd_col]-=1 
+        }
+        else{
+            var tsd_col = Math.floor(Math.random()*7)+2 //2 to 8
+            if (Math.floor(Math.random()*2) == 0){
+                for (var i=0; i<10; i++){
+                    height[i]+=1
+                }
+                height[tsd_col+1]-=1
+                height[tsd_col]-=1
+            }     
+            height[tsd_col+1]-=1
+            height[tsd_col]-=1
+        }
+ 
+        for (var j=0; j<20; j++){
+            for (var i=0; i<10; i++){
+                if (j < height[i]){
+                    game.board[j][i] = 'G'}}}
+
+        if (is_right){
+            var garbage_pos = ['GNGG','GGNG','GNNG','GGNG','NNNG','NNGG']
+            for (var row_idx=0; row_idx<6;row_idx++){
+                for (var col_idx=0; col_idx<4;col_idx++){
+                    game.board[row_idx][tsd_col-1+col_idx]= garbage_pos[row_idx][col_idx]
+                }
+            }
+            var kick_col = tsd_col-2
+
+
+        }
+        else{
+            var garbage_pos = ['GGNG','GNGG','GNNG','GNGG','GNNN','GGNN']
+            for (var row_idx=0; row_idx<6;row_idx++){
+                for (var col_idx=0; col_idx<4;col_idx++){
+                    game.board[row_idx][tsd_col-2+col_idx]= garbage_pos[row_idx][col_idx]
+                }
+            }
+            var kick_col = tsd_col+2
+
+        }
+        if (kick_col>=0 && kick_col<10){
+
+                game.board[4][kick_col] = 'G'
+                game.board[5][kick_col] = 'G'
+            
+        }
+
+
+        var lines_add = 4
+        var col_add =  tsd_col
+
+        for (var row_idx=0; row_idx<lines_add; row_idx++){
+            add_line(row_idx)
+            game.board[row_idx][col_add]='N'
+        }
+        
+        Record.added_line=[]
+
+    }
 }
 count = 0
 last_info = 'null'
@@ -1023,9 +1105,9 @@ function play_a_map(mode = null){
     
     game = new Game()
 
-    Config.no_of_unreserved_piece = Config.no_of_piece - 2
-    Config.mode = mode
     
+    Config.mode = mode
+    Config.no_of_unreserved_piece = Config.no_of_piece - 2 - (Config.mode == 'cspinquad')
     generate_final_map()
     Record.finished_map = clone(game.board)
     game.drawmode = true
@@ -1035,6 +1117,7 @@ function play_a_map(mode = null){
     for (var i=0; i<999; i++) {
         if (i==50){
             Config.skim_ind = false
+            Config.mdhole_ind = true
         }
         if (generate_a_ds_map(Config.no_of_unreserved_piece) && game.get_max_height() < 17){
             var queue = [...Record.piece_added].reverse()	
@@ -1044,6 +1127,10 @@ function play_a_map(mode = null){
             else if (Config.mode == 'dt'){	
                 queue.push('T')
                 queue.push('T')}	
+            else if (Config.mode == 'cspinquad'){	
+                queue.push('T')
+                queue.push('T')
+                queue.push('I')}
             Record.shuffled_queue = get_shuffled_holdable_queue(queue)	
             if (Record.shuffled_queue.length >0){	
                 break}
@@ -1059,6 +1146,7 @@ function play_a_map(mode = null){
     }
             
     Config.skim_ind = document.getElementById('input14').checked
+    Config.mdhole_ind = document.getElementById('input15').checked 
     
     play()
     
@@ -1075,6 +1163,10 @@ function play_a_dt_map(){
 
 function play_a_cspin_map(){
     play_a_map('cspin')
+    
+}
+function play_a_cspinquad_map(){
+    play_a_map('cspinquad')
     
 }
 function all_grounded(){
@@ -1103,7 +1195,8 @@ function detect_win(){
 
     if (game.total_piece == Config.no_of_piece){
         if ((Config.mode == 'cspin' && Record.done_tsd && Record.done_tst) ||
-            (Config.mode == 'dt' && Record.done_tsd && Record.done_tst)){
+            (Config.mode == 'dt' && Record.done_tsd && Record.done_tst) ||
+            (Config.mode == 'cspinquad' && Record.done_tsd && Record.done_tst && Record.done_quad)){
                 sound['win'].play()
                 if (Config.auto_next_ind){
                     play_a_map()}

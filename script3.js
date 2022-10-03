@@ -41,7 +41,7 @@ const sound={
 function play_sound(){
     if (game.combo >= 0){
         console.log('sing', game.combo)
-        sound[game.combo].cloneNode().play()
+        sound[Math.min(6,game.combo)].cloneNode().play()
     }
 }
 
@@ -631,6 +631,31 @@ function gen_url(){
     output.select()
     
 }
+function pcfinder(){
+    var url = 'https://wirelyre.github.io/tetra-tools/pc-solver.html'
+    var field = []
+    for (var i=0; i<190; i++) field.push(0)
+    console.log(field.length, JSON.stringify(field))
+    for (var row=3; row>=0; row--){
+        for (var col=0; col<10; col++){
+            console.log(game.board[row][col])
+            if (game.board[row][col] == 'N')
+                field.push(0)
+            else
+                field.push(8)
+        }
+    }
+    console.log(field.length, JSON.stringify(field))
+    for (var i=0; i<10; i++) field.push(0)
+    console.log(field.length, JSON.stringify(field))
+    var queue = [...game.holdmino].filter(x=>x!='G').join('') + game.bag.filter(x=>x!='G').join('')
+    
+    var fumen= encode_simple(field,queue)
+
+    console.log(fumen)
+    window.open(url+'?fumen='+ encodeURIComponent(fumen))
+}
+
 /*
 5. start
 */
