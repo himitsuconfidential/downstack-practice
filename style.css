@@ -220,31 +220,31 @@ button.game_button:focus{
     /* background-color: #363941; */
 }
 
-.game_button.red {
+.game_button.red, .mini_button.red  {
     color: rgb(235, 79, 101);
     border-color: rgb(235, 79, 101);
 }
-.game_button.orange {
+.game_button.orange, .mini_button.orange {
     color: rgb(243, 137, 39);
     border-color: rgb(243, 137, 39);
 }
-.game_button.yellow {
+.game_button.yellow, .mini_button.yellow {
     color: rgb(246, 208, 60);
     border-color: rgb(246, 208, 60);
 }
-.game_button.green {
+.game_button.green, .mini_button.green {
     color: rgb(81, 184, 77);
     border-color: rgb(81, 184, 77);
 }
-.game_button.cyan {
+.game_button.cyan, .mini_button.cyan {
     color: rgb(66, 175, 225);
     border-color: rgb(66, 175, 225);
 }
-.game_button.blue {
+.game_button.blue, .mini_button.blue {
     color: rgb(17, 101, 181);
     border-color: rgb(17, 101, 181);
 }
-.game_button.purple {
+.game_button.purple, .mini_button.purple {
     color: rgb(151, 57, 162);
     border-color: rgb(151, 57, 162);
 }
@@ -311,14 +311,45 @@ input:focus {
 
 #gamemode #input_queue {
     width: 8rem;
+    font-family: monospace;
 }
 
 #field {
     color: #dcddde;
     background-color:rgba(0, 0, 0, 0.2);
+}
+#field:focus {
     outline: 0.2rem solid rgb(66, 175, 225);  
 }
 
 #gamemode #output_url {
     width: 8rem;
+}
+
+.mini_button{
+    padding: 0.2rem 0.5rem;
+    display: inline-block;
+    border-radius: 2rem;
+    border: 0.15rem solid;
+    outline: none;
+    background-color: #2a2c30;
+    transition: color 250ms ease, border-color 250ms ease;
+
+    color: #dcddde;
+    border-color: #dcddde;
+}
+button.mini_button:hover{
+    color: #dcddde;
+    border-color: #dcddde;
+}
+
+select#input13 {
+    padding: 0.2rem;
+    display: inline-block;
+    border-radius: 2rem;
+    border: 0.15rem solid;
+    outline: none;
+    background-color: #2a2c30;
+    color: rgb(246, 208, 60);
+    border-color: rgb(246, 208, 60);
 }

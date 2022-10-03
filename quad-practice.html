@@ -15,73 +15,86 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tetris Quad Puzzle</title>
     <link rel="stylesheet" href="style.css">
+    <script src="style-scripts.js"></script>
     
 </head>
 <body>
     <div class="banner">
-        <label> Tetris Quad Puzzle - Practice</label>
+        <a class="title" href="/downstack-practice/quad-practice.html"> Tetris Quad Puzzle - Practice</a>
+        <div class="nav">
+            <ul class="dropdown">
+                <li><a href="/downstack-practice/">Downstack Practice</a></li>
+                <li><a href="/downstack-practice/pc-practice.html">Mid-game PC Practice</a></li>
+                <li><a href="/downstack-practice/usermode.html">Usermode (Includes PC Practice)</a></li>
+                <li><a href="/downstack-practice/tspin-practice.html">T-Spin Practice</a></li>
+                <li><a href="/downstack-practice/advance-tspin-practice.html">Advanced T-Spin Practice</a></li>
+                <!-- <li><a href="/downstack-practice/quad-practice.html">Quad Practice</a></li> -->
+                <li><a href="javascript:void(0);" onclick="toggleSettings()">Settings</a></li>
+            </ul>
+        </div>
+        <div class="burger" onclick="toggleBurger()">
+            <span></span>
+        </div>
     </div>
-    <label> More practice: </label>
-    <br>
-    <a href="https://himitsuconfidential.github.io/downstack-practice/"> downstack practice</a>
-    <br>
-    <a href="https://himitsuconfidential.github.io/downstack-practice/pc-practice.html"> mid-game pc practice</a>
-    <br>
-    <a href="https://himitsuconfidential.github.io/downstack-practice/usermode.html"> usermode (include pc practice)</a>
+
+    <div id="setting">
+        <div class="settings-container">
+            <h1>Settings</h1>
+            <a class="close-button" href="javascript:void(0);" onclick="closeSettings()"></a>
+            <table>
+                <tbody>
+                <tr><td class="setting-label">Move Left</td><td><input class='keybind' id="input1" type="text" size="7" value="" readOnly></td></tr>
+                <tr><td class="setting-label">Move Right</td><td><input class='keybind' id="input2" type="text" size="7" value="" readOnly></td></tr>
+                <tr><td class="setting-label">Soft Drop</td><td><input class='keybind' id="input3" type="text" size="7" value="" readOnly></td></tr>
+                <tr><td class="setting-label">Hard Drop</td><td><input class='keybind' id="input4" type="text" size="7" value="" readOnly></td></tr>
+                <tr><td class="setting-label">Rotate Left</td><td><input class='keybind' id="input5" type="text" size="7" value="" readOnly></td></tr>
+                <tr><td class="setting-label">Rotate Right</td><td><input class='keybind' id="input6" type="text" size="7" value="" readOnly></td></tr>
+                <tr><td class="setting-label">Rotate 180</td><td><input class='keybind' id="input7" type="text" size="7" value="" readOnly></td></tr>
+                <tr><td class="setting-label">Hold</td><td><input class='keybind' id="input8" type="text" size="7" value="" readOnly></td></tr>
+                <tr><td class="setting-label">Retry</td><td><input class='keybind' id="input9" type="text" size="7" value="" readOnly></td></tr>
+                <tr><td class="setting-label">Show Answer</td><td><input class='keybind' id="input10" type="text" size="7" value="" readOnly></td></tr>
+                <tr><td class="setting-label">DAS (1 to 200)</td><td><input id="input11" type="number" min="1" max='200'></td></tr>
+                <tr><td class="setting-label">ARR (0 to 100)</td><td><input id="input12" type="number" min="0" max='100'></td></tr>
+                <tr><td class="setting-label">Generate New Map on Win</td><td><input id="input12.1" type="checkbox" min="0" max='100'></td></tr>
+                
+                </tbody>
+            </table>
+        </div>
+    </div>
+
     <div class="flex">
         <div id="leftpanel" class="panel">
-            <button id='setting_button' class="collapsible" onclick="document.getElementById('setting').hidden=!document.getElementById('setting').hidden">Setting ᐯ</button><br>
-            <div id='setting' hidden=true>
-                <table>
-                    <tbody>
-                    <tr><td width="150">Move Left:</td><td width="125"><input class='keybind' id="input1" type="text" size="7" value="" readOnly></td></tr>
-                    <tr><td>Move Right:</td><td><input class='keybind' id="input2" type="text" size="7" value="" readOnly></td></tr>
-                    <tr><td>Soft Drop:</td><td><input class='keybind' id="input3" type="text" size="7" value="" readOnly></td></tr>
-                    <tr><td>Hard Drop:</td><td><input class='keybind' id="input4" type="text" size="7" value="" readOnly></td></tr>
-                    <tr><td>Rotate Left:</td><td><input class='keybind' id="input5" type="text" size="7" value="" readOnly></td></tr>
-                    <tr><td>Rotate Right:</td><td><input class='keybind' id="input6" type="text" size="7" value="" readOnly></td></tr>
-                    <tr><td>Rotate 180:</td><td><input class='keybind' id="input7" type="text" size="7" value="" readOnly></td></tr>
-                    <tr><td>Hold:</td><td><input class='keybind' id="input8" type="text" size="7" value="" readOnly></td></tr>
-                    <tr><td>Retry:</td><td><input class='keybind' id="input9" type="text" size="7" value="" readOnly></td></tr>
-                    <tr><td>Show Answer:</td><td><input class='keybind' id="input10" type="text" size="7" value="" readOnly></td></tr>
-                    <tr><td>DAS: (1 to 200)</td><td><input id="input11" type="number" min="1" max='200'></td></tr>
-                    <tr><td>ARR: (0 to 100)</td><td><input id="input12" type="number" min="0" max='100'></td></tr>
-                    <tr><td>Autmatically generate map when win</td><td><input id="input12.1" type="checkbox" min="0" max='100'></td></tr>
-                    
-                    </tbody>
-                </table>
-            </div>
-
-        </div>
-        <div id="tetris">
-            <canvas id="board" tabindex='1' width="520" height="610" style="border:1px solid #000000;" z-index="4"></canvas>
-        </div>
-
-        <div id="rightpanel" class="panel">
             
-            
-            <button class="game_button" onclick="play_a_quad_map(); board.focus()">Quad Practice</button><br>
-            <button class="game_button" onclick="retry(); board.focus()">Retry</button><br>
-            <button class="game_button" onclick="show_ans(); board.focus()">Show Answer</button><br>
-
+            <h2>Winning Requirement</h2>
             <div id="winning_requirement">
-                <h3>Winning Requirement:</h3>
                 <p id="winning_requirement1">Do a Quad</p>
                 <p id="winning_requirement2"><br></p>
             </div>
 
-            <button id='gamemode_button' class="collapsible" onclick="document.getElementById('gamemode').hidden=!document.getElementById('gamemode').hidden">Game Mode ᐯ</button>
-            <div id="gamemode">
-                
-                <span>Number of piece:   </span><input id="input13" type="number" min="2" max='7'>
-                <br>
-                <input id="input14" type="checkbox" checked="checked"><span>Clear line in the solution</span>
-                <br>
-                <input id="input15" type="checkbox" checked="checked"><span>More holes in the map</span>
-                <br>
-                <input id="input16" type="checkbox" checked="checked"><span>Generate unique pieces</span>
-                <br>
-                <input id="input17" type="checkbox" checked="checked"><span>Generate flater board</span>
+            <button class="game_button orange" onclick="retry(); board.focus()">Retry</button>
+            <button class="game_button red" onclick="show_ans(); board.focus()">Show Answer</button>
+
+        </div>
+        <div id="tetris">
+            <canvas id="board" tabindex='1' width="520" height="610" z-index="4"></canvas>
+        </div>
+
+        <div id="rightpanel" class="panel">
+            
+            <h2>Modes</h2>
+            <button class="game_button cyan" onclick="play_a_quad_map(); board.focus()">Quad Practice</button>
+
+            <button id="game_button" class="game_button yellow" onclick="toggleOptions()">Hide Options</button>
+            <div id="gamemode" class="open">
+                <table>
+                    <tbody>
+                        <tr><td><input id="input13" type="number" min="2" max='7'></td><td>Pieces</td></tr>
+                        <tr><td><input id="input14" type="checkbox" checked="checked"></td><td>Clear line in the solution</td></tr>
+                        <tr><td><input id="input15" type="checkbox" checked="checked"></td><td>More holes in the map</td></tr>
+                        <tr><td><input id="input16" type="checkbox" checked="checked"></td><td>Generate unique pieces</td></tr>
+                        <tr><td><input id="input17" type="checkbox" checked="checked"></td><td>Generate flatter board</td></tr>
+                    </tbody>
+                </table>
             </div>
 
         </div>
