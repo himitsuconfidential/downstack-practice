@@ -320,7 +320,7 @@ function update_keybind(){
     add_generic_keybind(Customized_key[6], ()=> game.rotate_180())
     add_generic_keybind(Customized_key[7], ()=> game.hold())
     add_generic_keybind(Customized_key[8], ()=> retry())
-    add_generic_keybind(Customized_key[9], ()=> play_a_map())
+    add_generic_keybind(Customized_key[9], ()=> pcfinder())
     
 }
 
