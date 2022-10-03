@@ -1,76 +1,355 @@
 html{
-    background-color: rgb(240,240,240);
+    background-color: #363941;
+}
+
+body{
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+a {
+    text-decoration: none;
 }
 
 .flex{
     display: flex;
     justify-content: center;
     align-items: flex-start;
+    padding-top: 2rem;
 }
 .banner{
     text-align: center;
-    background-color: aquamarine;
-    color: black;
+    background-color: #2a2c30;
+    color: #dcddde;
     font-size: 30px;
     font-weight: bold;
+    padding: 1.5rem;
+    height: 2rem;
+
+    position: relative;
+}
+
+.banner a {
+    color: #dcddde;
+}
+
+.nav {
+    /* position: relative; */
+    color: #dcddde;
+}
+
+.nav .dropdown {
+    text-align: left;
+    display: none;
+    position: absolute;
+    background-color: #2a2c30;
+
+    list-style-type: none;
+    padding-inline-start: 0;
+    margin-block-start: 0;
+    margin-block-end: 0;
+
+    right: 0;
+    top: 5rem;
+
+    font-size: 1.2rem;
+
+}
+.nav .dropdown.open {
+    display: block;
+}
+
+.nav .dropdown li {
+    border: 0.2rem solid #dcddde;
+    border-bottom: none;
+}
+.nav .dropdown li:last-child {
+    border-bottom: 0.2rem solid #dcddde;
+}
+.nav .dropdown li:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+.nav .dropdown li a {
+    display: block;
+    padding: 1rem;
+}
+
+/* https://worstpractice.dev/frontend/create-a-simple-hamburber-menu-with-css */
+.burger {
+    z-index: 2;
+    position: absolute;
+    width: 3rem;
+    height: 3rem;
+    top: 1rem;
+    right: 1rem;
+    padding: 0.5rem;
+    cursor: pointer;
+}
+
+.burger span,
+.burger span::before,
+.burger span::after {
+    content: '';
+    display: block;
+    width: 2rem;
+    height: 0.25rem;
+    position: absolute;
+    margin-top: 1rem;
+    background: #dcddde;
+    /* border-radius: 0.3rem; */
+}
+
+.burger span::before {
+    margin-top: -0.6rem;
+}
+
+.burger span::after {
+    margin-top: 0.6rem;
+}
+
+#setting {
+    display: none;
+    z-index: 100;
+    height: 100vh;
+    width: 100vw;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.75);
+    color: #dcddde;
+}
+#setting.open {
+    display: block;
+}
+
+.close-button {
+    padding: 1rem;
+    cursor: pointer;
+
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    width: 2rem;
+    height: 2rem;
+}
+
+.close-button:before, .close-button:after {
+    position: absolute;
+    left: 15px;
+    content: ' ';
+    height: 2rem;
+    width: 0.2rem;
+    background-color: #dcddde;
+  }
+.close-button:before {
+    transform: rotate(45deg);
+}
+.close-button:after {
+    transform: rotate(-45deg);
+}  
+
+.settings-container {
+    border: 0.2rem solid #dcddde;
+    background-color: #363941;
+    padding: 2rem 5rem;
+    margin: 5rem auto;
+    width: 25rem;
+    position: relative;
+    text-align: center;
+}
+
+.settings-container h1 {
+    margin-bottom: 2rem;
 }
 
 table {
-    border: 1px solid;
-    background-color: lightblue;
+    /* border: 1px solid; */
+}
+
+table td {
+    padding: 0.2rem;
+}
+
+.setting-label {
+    text-align: right;
+    font-weight: bold;
+}
+
+table td input {
+    width: 5rem;
+    background-color:rgba(0, 0, 0, 0.2);
+    color: #dcddde;
+    border: none;
+    padding: 0.3rem;
+}
+
+#setting td input {
+    text-align: center;
 }
 
 .panel{
-    width: 250px;
-    margin: 20px;
-}
-
-.collapsible {
-    background-color: navy;
-    color: white;
-    cursor: pointer;
-    padding: 5px;
-    width: 100%;
-    border: none;
-    text-align: center;
-    outline: none;
-    font-size: 15px;
-    
-}
-.collapsible:hover{
-    background-color: blue
+    width: 18rem;
+    margin-left: 2rem;
+    margin-right: 2rem;
 }
 
 .game_button{
-    width: 80%;
-    height: 30px;
-    font-size: 15px;
-    margin-bottom: 10px;
-    background-color: navy;
-    color: white;
-    border-radius: 10px;
+    width: 100%;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
     cursor: pointer;
+    font-weight: bold;
+
+    padding: 0.5rem 1rem;
+    display: inline-block;
+    border-radius: 2rem;
+    border: 0.2rem solid;
+    outline: none;
+    background-color: #2a2c30;
+    transition: color 250ms ease, border-color 250ms ease;
+
+    color: #dcddde;
+    border-color: #dcddde;
+
 }
-.game_button:hover{
-    background-color: blue
+button.game_button:hover{
+    color: #dcddde;
+    border-color: #dcddde;
+}
+button.game_button:focus{
+    /* background-color: #363941; */
+}
+
+.game_button.red, .mini_button.red  {
+    color: rgb(235, 79, 101);
+    border-color: rgb(235, 79, 101);
+}
+.game_button.orange, .mini_button.orange {
+    color: rgb(243, 137, 39);
+    border-color: rgb(243, 137, 39);
+}
+.game_button.yellow, .mini_button.yellow {
+    color: rgb(246, 208, 60);
+    border-color: rgb(246, 208, 60);
+}
+.game_button.green, .mini_button.green {
+    color: rgb(81, 184, 77);
+    border-color: rgb(81, 184, 77);
+}
+.game_button.cyan, .mini_button.cyan {
+    color: rgb(66, 175, 225);
+    border-color: rgb(66, 175, 225);
+}
+.game_button.blue, .mini_button.blue {
+    color: rgb(17, 101, 181);
+    border-color: rgb(17, 101, 181);
+}
+.game_button.purple, .mini_button.purple {
+    color: rgb(151, 57, 162);
+    border-color: rgb(151, 57, 162);
+}
+
+#tetris {
+}
+
+#board{
+    background-color: #2a2c30;
+    border: none;
+    padding: 1rem;
+    outline: none;
 }
 
 #gamemode{
-    border: 1px solid;
-    background-color: lightblue;
+    display: none;
+    border: 0.2rem solid rgb(246, 208, 60);
+    background-color: #363941;
+    color: #dcddde;
+    padding: 1rem;
+}
+#gamemode.open {
+    display:block;
+}
+#gamemode input {
+    width: 2rem;
+    background-color:rgba(0, 0, 0, 0.2);
+    color: #dcddde;
+    border: none;
+    padding: 0.3rem;
 }
 
 #winning_requirement{
-    border: 1px solid navy;
-    background-color: lightcyan;
+    padding: 1rem;
+    /* background-color: rgba(66, 175, 225, 0.2); */
+    background-color: #2a2c30;
+    color: #dcddde;
+    border: 0.2rem solid #dcddde;
 
-    margin-top: 30px;
-    margin-bottom: 30px;
+    text-align: center;
+    margin-bottom: 2rem;
+}
 
+#rightpanel h2,
+#leftpanel h2 {
+    color: #dcddde;
     text-align: center;
 }
 
 input:focus {
-    color: blue;
-    outline: 2px solid orange;  
-   }
+    color: rgb(66, 175, 225);
+    outline: 0.2rem solid rgb(66, 175, 225);  
+}
+
+#field_error,
+#queue_error {
+    font-size: 1rem;
+    color:rgb(235, 79, 101);
+}
+
+#url_but {
+    display: inline;
+}
+
+#gamemode #input_queue {
+    width: 8rem;
+    font-family: monospace;
+}
+
+#field {
+    color: #dcddde;
+    background-color:rgba(0, 0, 0, 0.2);
+}
+#field:focus {
+    outline: 0.2rem solid rgb(66, 175, 225);  
+}
+
+#gamemode #output_url {
+    width: 8rem;
+}
+
+.mini_button{
+    padding: 0.2rem 0.5rem;
+    display: inline-block;
+    border-radius: 2rem;
+    border: 0.15rem solid;
+    outline: none;
+    background-color: #2a2c30;
+    transition: color 250ms ease, border-color 250ms ease;
+
+    color: #dcddde;
+    border-color: #dcddde;
+}
+button.mini_button:hover{
+    color: #dcddde;
+    border-color: #dcddde;
+}
+
+select#input13 {
+    padding: 0.2rem;
+    display: inline-block;
+    border-radius: 2rem;
+    border: 0.15rem solid;
+    outline: none;
+    background-color: #2a2c30;
+    color: rgb(246, 208, 60);
+    border-color: rgb(246, 208, 60);
+}
