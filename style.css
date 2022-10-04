@@ -382,3 +382,28 @@ select#input13, select#pcwizard_option {
     border: none;
     padding: 0.3rem;
 }
+
+.tc {
+	position: absolute;
+	bottom: 0;
+    left: 0;
+	text-align: center;
+	padding: 10px;
+	pointer-events: none;
+	z-index: 11;
+    display: none;
+    font-size: 80px;
+}
+.tc span {
+	width: 130px;
+	height: 130px;
+	border: 3px solid #fff;
+	background-color: #87cefa;
+	opacity: 0.4;
+	margin: 6px 1px;
+	vertical-align: text-bottom;
+	pointer-events: auto;
+	display: inline-block;
+    touch-action: manipulation;
+    
+}

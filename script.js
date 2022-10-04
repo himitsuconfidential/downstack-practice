@@ -368,7 +368,66 @@ function set_event_listener(){
     document.getElementById('input15').onchange = e=>{save_gamemode()}
     document.getElementById('input16').onchange = e=>{save_gamemode()}
     document.getElementById('input17').onchange = e=>{save_gamemode()}
+    const ua = navigator.userAgent;
+    if (/(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i.test(ua)) {
+        document.getElementById('board').onblur = (e=>e.preventDefault())
+        document.getElementById('tcc').style.display = 'inline-block';
+    } else if (
+        /Mobile|Android|iP(hone|od)|IEMobile|BlackBerry|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/.test(ua)
+    ) {
+        document.getElementById('board').onblur = (e=>e.preventDefault())
+        document.getElementById('tcc').style.display = 'inline-block';
+    } // else document.getElementById("tcc").style.display = 'none';
+
+    
+    document.getElementById('tc-dr').addEventListener('touchstart', function (e) {
+        game.rotate_180()
+        board.focus()
+    });
+    document.getElementById('tc-h').addEventListener('touchstart', function (e) {
+        game.hold()
+        board.focus()
+    });
+    document.getElementById('tc-hd').addEventListener('touchstart', function (e) {
+        game.harddrop()
+        play_sound()
+        detect_win()
+        board.focus()
+    });
+    document.getElementById('tc-l').addEventListener('touchstart', function (e) {
+        press_left(true)
+        board.focus()
+    });
+    document.getElementById('tc-l').addEventListener('touchend', function (e) {
+        release_left(true)
+        board.focus()
+    });
+    document.getElementById('tc-r').addEventListener('touchstart', function (e) {
+        press_right(true)
+        board.focus()
+    });
+    document.getElementById('tc-r').addEventListener('touchend', function (e) {
+        release_right(true)
+        board.focus()
+    });
+    document.getElementById('tc-d').addEventListener('touchstart', function (e) {
+        press_down(true)
+        board.focus()
+    });
+    document.getElementById('tc-d').addEventListener('touchend', function (e) {
+        release_down(true)
+        board.focus()
+    });
+    document.getElementById('tc-cc').addEventListener('touchstart', function (e) {
+        game.rotate_anticlockwise()
+        board.focus()
+    });
+    document.getElementById('tc-c').addEventListener('touchstart', function (e) {
+        game.rotate_clockwise()
+        board.focus()
+    });
 }
+
 /*
 4. map generation
 */
@@ -1037,6 +1096,8 @@ function show_ans(){
         setTimeout(retry, 3000)
 }
 }
+
+
 /*
 5. start
 */
