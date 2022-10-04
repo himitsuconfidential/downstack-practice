@@ -319,7 +319,7 @@ input:focus {
     color: rgb(66, 175, 225);
     outline: 0.2rem solid rgb(66, 175, 225);  
 }
-
+#pcwizard_error,
 #field_error,
 #queue_error {
     font-size: 1rem;
@@ -364,7 +364,7 @@ button.mini_button:hover{
     border-color: #dcddde;
 }
 
-select#input13 {
+select#input13, select#pcwizard_option {
     padding: 0.2rem;
     display: inline-block;
     border-radius: 2rem;
@@ -373,4 +373,12 @@ select#input13 {
     background-color: #2a2c30;
     color: rgb(246, 208, 60);
     border-color: rgb(246, 208, 60);
+}
+
+#pcwizard input {
+    width: 8rem;
+    background-color:rgba(0, 0, 0, 0.2);
+    color: #dcddde;
+    border: none;
+    padding: 0.3rem;
 }

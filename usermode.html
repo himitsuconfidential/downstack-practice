@@ -67,23 +67,24 @@
             <a class="close-button" href="javascript:void(0);" onclick="close_pcwizard()"></a>
             <table>
                 <tbody>
-                    <label>Queue: choose a queue</label>
+                    <label id="pcwizard_instruction">Choose a queue</label>
                     <br>
-                    <button id="game_button" class="mini_button yellow" onclick="document.getElementById('input_queue').value='[IOTSZJL]p7,*p4'">1st pc bag</button>
-                    <button id="game_button" class="mini_button yellow" onclick="document.getElementById('input_queue').value='[IOTSZJL]p1,*p3,*p7'">2nd pc bag</button>
-                    <button id="game_button" class="mini_button yellow" onclick="document.getElementById('input_queue').value='[IOTSZJL]p1,*p7,*p3'">3rd pc bag</button>
-                    <button id="game_button" class="mini_button yellow" onclick="document.getElementById('input_queue').value='[IOTSZJL]p1,*p4,*p6'">4th pc bag</button>
-                    <button id="game_button" class="mini_button yellow" onclick="document.getElementById('input_queue').value='[IOTSZJL]p1,*p1,*p7,*p2'">5th pc bag</button>
-                    <button id="game_button" class="mini_button yellow" onclick="document.getElementById('input_queue').value='[IOTSZJL]p1,*p5,*p5'">6th pc bag</button>
-                    <button id="game_button" class="mini_button yellow" onclick="document.getElementById('input_queue').value='[IOTSZJL]p1,*p2,*p7'">7th pc bag</button>
-                    <br>
-                    <br>
-                    <label>Field: leftclick for garbage, rightclick for empty space</label>
-                    <br>
-                    <canvas id="mini_board_canva" tabindex='1' width="200" height="200" z-index="4"></canvas>
-                    <div id="field_error"></div>
                     
-                
+                    <br>
+                    <input type="text" id="pcwizard_queue" value="">
+                    <select id="pcwizard_option">
+                        <option value="customized">1st</option>
+                        <option value="customized">2nd</option>
+                        <option value="customized">3rd</option>
+                        <option value="customized">4th</option>
+                        <option value="customized">5th</option>
+                        <option value="customized">6th</option>
+                        <option value="customized">7th</option>
+                    </select>
+                    <br>
+                    <button class="mini_button green" onclick="save_wizard(),close_pcwizard(),play_a_map()"> Save and generate map</button>
+                    <label id="pcwizard_error"></label>
+
                 
                 </tbody>
             </table>

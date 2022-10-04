@@ -660,143 +660,61 @@ function pcfinder(){
 */
 function toggle_pcwizard() {
     const dropdown = document.querySelector('.nav .dropdown');
-    const setting = document.getElementById('pcwizard');
+    const pcwizard = document.getElementById('pcwizard');
     dropdown.classList.remove('open');
-    setting.classList.toggle('open');
-    mini_board = [['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'],
-    ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'],
-    ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'],
-    ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'],
-    ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'],
-    ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'],
-    ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'],
-    ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'],
-    ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'],
-    ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N']]
-    render_mini_board()
+    pcwizard.classList.toggle('open');
+    
     
 }
-
+document.getElementById('pcwizard_option').onchange = (e=>{
+    var instrution =
+    ['Enter 0 pieces',
+    'Enter 4 pieces e.g. IOTS',
+    'Enter 1 pieces e.g. I',
+    'Enter 5 pieces e.g. IOTSZ',
+    'Enter 2 pieces e.g. IO',
+    'Enter 6 pieces e.g. IOTSZJ',
+    'Enter 3 pieces e.g. IOT',
+    ]
+    document.getElementById('pcwizard_instruction').textContent = instrution[document.getElementById('pcwizard_option').selectedIndex]
+})
 function close_pcwizard() {
-    const setting = document.getElementById('pcwizard');
-    setting.classList.remove('open');
-    save_mini_board()
+    const pcwizard = document.getElementById('pcwizard');
+    pcwizard.classList.remove('open');
+    
+
 }
 
-function render_mini_board(){
-    var ctx = document.getElementById("mini_board_canva").getContext('2d');
-    ctx.clearRect(0,0,200,200);
-    // render background and margin
-
-
-    ctx.fillStyle = 'black';
-    ctx.fillRect(0,0,200,200);
-    ctx.strokeStyle = 'grey';
-    ctx.strokeRect(0,0,200,200);
-    // render grid
-    for (var row=0; row<10; row++)
-    for (var col=0; col<10; col++){
-        ctx.strokeRect(col*20,(9-row)*20,20,20);
+function save_wizard(){
+    var input_queue = document.getElementById('input_queue')
+    var pcwizard_queue = document.getElementById('pcwizard_queue')
+    var pcwizard_option = document.getElementById('pcwizard_option')
+    var pcwizard_error = document.getElementById('pcwizard_error')
+    input_queue.value = pcwizard_queue.value + pcwizard_option.selectedIndex
+    if (pcwizard_option.selectedIndex == 0){//1st
+        input_queue.value = `*!,*p4`
     }
-    // render piece
-    
-    ctx.strokeStyle = 'grey';
-    for (var row=0; row<10; row++)
-        for (var col=0; col<10; col++){
-            if (mini_board[row][col] != 'N'){
-                ctx.fillStyle = color_table[mini_board[row][col]];
-                ctx.fillRect(col*20,(9-row)*20,20,20);
-            }
-        }
-}
-
-
-function paint_board(e){
-    
-        var col = Math.floor(e.offsetX/20)
-        var row = 9-Math.floor(e.offsetY/20)
-        if (Record.last_paint == row*10 + col) return
-        Record.last_paint = row*10 + col
-        mini_board[row][col] = 'G'
-    
-        render_mini_board()
-        console.log('clicked',e.offsetX,e.offsetY,Record.last_paint)
-
-}
-
-function erase_board(e){
-    
-    var col = Math.floor(e.offsetX/20)
-    var row = 9-Math.floor(e.offsetY/20)
-
-    mini_board[row][col] = 'N'
-
-    render_mini_board()
-
-}
-
-mini_board_canva = document.getElementById('mini_board_canva')
-mini_board_canva.onmousedown = (e=>{
-    if (e.button == 0){
-        paint_board(e); 
-        render_mini_board();
-        mini_board_canva.onmousemove = (e=>{
-            
-                paint_board(e); 
-                render_mini_board();
-            
-        })
+    else if (pcwizard_option.selectedIndex == 1){//2nd
+        input_queue.value = `[${pcwizard_queue.value}]!,*!`
     }
-    if (e.button == 2){
-        erase_board(e); 
-        render_mini_board();
-        mini_board_canva.onmousemove = (e=>{
-            
-                erase_board(e); 
-                render_mini_board();
-            
-        })
+    else if (pcwizard_option.selectedIndex == 2){//3nd
+        input_queue.value = `[${pcwizard_queue.value}]!,*!,*p3`
     }
-})
-
-document.oncontextmenu=(e=>e.preventDefault())
-
-mini_board_canva.onmouseup = mini_board_canva.onmouseout = (e=>{
-    
-    mini_board_canva.onmousemove = (e=>{
-    })
-    
-    Record.last_paint = -1
-})
-
-function save_mini_board(){
-    var partial_map = document.getElementById('field')
-    var started = false
-    var sym = ''
-    var text = ''
-    for (var row=9; row>=0; row--){
-        if (mini_board[row].some(x=>x!='N')){
-            started = true
-        }
-        if (!started){
-            continue
-        }
-        text += sym
-        for (var col=0; col<10; col++){
-            sym = '\n'
-            if (mini_board[row][col] == 'N'){
-               text += '_'
-            }
-            else if (mini_board[row][col] == 'G'){
-                text += 'X'
-            }
-            else{
-                text +=  mini_board[row][col]
-            }
-        } 
-        }
-    partial_map.value = text
+    else if (pcwizard_option.selectedIndex == 3){//4th
+        input_queue.value = `[${pcwizard_queue.value}]!,*p6`
+    }
+    else if (pcwizard_option.selectedIndex == 4){//5th
+        input_queue.value = `[${pcwizard_queue.value}]!,*!,*p2`
+    }
+    else if (pcwizard_option.selectedIndex == 5){//6th
+        input_queue.value = `[${pcwizard_queue.value}]!,*p5`
+    }
+    else if (pcwizard_option.selectedIndex == 6){//7th
+        input_queue.value = `[${pcwizard_queue.value}]!,*!`
+    }
+    document.getElementById('field').value = ''
 }
+
 /*
 5. start
 */
@@ -819,7 +737,7 @@ function initialize(){
 
         var [f,q] = temp.split('=')
         document.getElementById("input_queue").value = q
-        document.getElementById("field").value = f.match(/.{10}/g).join('\n')
+        document.getElementById("field").value = f.length>0? f.match(/.{10}/g).join('\n'): ''
         play_a_map()
         console.log('loading customized map')
     }
