@@ -382,49 +382,49 @@ function set_event_listener(){
     
     document.getElementById('tc-dr').addEventListener('touchstart', function (e) {
         game.rotate_180()
-        board.focus()
+        render()
     });
     document.getElementById('tc-h').addEventListener('touchstart', function (e) {
         game.hold()
-        board.focus()
+        render()
     });
     document.getElementById('tc-hd').addEventListener('touchstart', function (e) {
         game.harddrop()
         play_sound()
         detect_win()
-        board.focus()
+        render()
     });
     document.getElementById('tc-l').addEventListener('touchstart', function (e) {
         press_left(true)
-        board.focus()
+        render()
     });
     document.getElementById('tc-l').addEventListener('touchend', function (e) {
         release_left(true)
-        board.focus()
+        render()
     });
     document.getElementById('tc-r').addEventListener('touchstart', function (e) {
         press_right(true)
-        board.focus()
+        render()
     });
     document.getElementById('tc-r').addEventListener('touchend', function (e) {
         release_right(true)
-        board.focus()
+        render()
     });
     document.getElementById('tc-d').addEventListener('touchstart', function (e) {
         press_down(true)
-        board.focus()
+        render()
     });
     document.getElementById('tc-d').addEventListener('touchend', function (e) {
         release_down(true)
-        board.focus()
+        render()
     });
     document.getElementById('tc-cc').addEventListener('touchstart', function (e) {
         game.rotate_anticlockwise()
-        board.focus()
+        render()
     });
     document.getElementById('tc-c').addEventListener('touchstart', function (e) {
         game.rotate_clockwise()
-        board.focus()
+        render()
     });
 }
 

@@ -374,6 +374,64 @@ function set_event_listener(){
     var is_hidden = !(Config.mode == 'customized')
     document.getElementById('customized').hidden = is_hidden
     }
+    const ua = navigator.userAgent;
+    if (/(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i.test(ua)) {
+        document.getElementById('board').onblur = (e=>e.preventDefault())
+        document.getElementById('tcc').style.display = 'inline-block';
+    } else if (
+        /Mobile|Android|iP(hone|od)|IEMobile|BlackBerry|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/.test(ua)
+    ) {
+        document.getElementById('board').onblur = (e=>e.preventDefault())
+        document.getElementById('tcc').style.display = 'inline-block';
+    } // else document.getElementById("tcc").style.display = 'none';
+
+    
+    document.getElementById('tc-dr').addEventListener('touchstart', function (e) {
+        game.rotate_180()
+        render()
+    });
+    document.getElementById('tc-h').addEventListener('touchstart', function (e) {
+        game.hold()
+        render()
+    });
+    document.getElementById('tc-hd').addEventListener('touchstart', function (e) {
+        game.harddrop()
+        play_sound()
+        detect_win()
+        render()
+    });
+    document.getElementById('tc-l').addEventListener('touchstart', function (e) {
+        press_left(true)
+        render()
+    });
+    document.getElementById('tc-l').addEventListener('touchend', function (e) {
+        release_left(true)
+        render()
+    });
+    document.getElementById('tc-r').addEventListener('touchstart', function (e) {
+        press_right(true)
+        render()
+    });
+    document.getElementById('tc-r').addEventListener('touchend', function (e) {
+        release_right(true)
+        render()
+    });
+    document.getElementById('tc-d').addEventListener('touchstart', function (e) {
+        press_down(true)
+        render()
+    });
+    document.getElementById('tc-d').addEventListener('touchend', function (e) {
+        release_down(true)
+        render()
+    });
+    document.getElementById('tc-cc').addEventListener('touchstart', function (e) {
+        game.rotate_anticlockwise()
+        render()
+    });
+    document.getElementById('tc-c').addEventListener('touchstart', function (e) {
+        game.rotate_clockwise()
+        render()
+    });
 
 }
 /*
