@@ -187,6 +187,27 @@ table td input {
     text-align: center;
 }
 
+#pcwizard {
+    display: none;
+    z-index: 100;
+    height: 100%;
+    width: 100vw;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    color: #dcddde;
+    position:fixed
+}
+#pcwizard.open {
+    display: block;
+}
+
+
+#pcwizard td input {
+    text-align: center;
+}
+
 .panel{
     width: 18rem;
     margin-left: 2rem;

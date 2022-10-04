@@ -405,7 +405,7 @@ Record={
     ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'],
     ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'],
     ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N']],
-    
+    last_paint: -1
 }
 
 function random_choose(arr){
@@ -655,7 +655,148 @@ function pcfinder(){
     console.log(fumen)
     window.open(url+'?fumen='+ encodeURIComponent(fumen))
 }
+/*
+4.6 pcwizard
+*/
+function toggle_pcwizard() {
+    const dropdown = document.querySelector('.nav .dropdown');
+    const setting = document.getElementById('pcwizard');
+    dropdown.classList.remove('open');
+    setting.classList.toggle('open');
+    mini_board = [['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'],
+    ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'],
+    ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'],
+    ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'],
+    ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'],
+    ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'],
+    ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'],
+    ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'],
+    ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'],
+    ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N']]
+    render_mini_board()
+    
+}
 
+function close_pcwizard() {
+    const setting = document.getElementById('pcwizard');
+    setting.classList.remove('open');
+    save_mini_board()
+}
+
+function render_mini_board(){
+    var ctx = document.getElementById("mini_board_canva").getContext('2d');
+    ctx.clearRect(0,0,200,200);
+    // render background and margin
+
+
+    ctx.fillStyle = 'black';
+    ctx.fillRect(0,0,200,200);
+    ctx.strokeStyle = 'grey';
+    ctx.strokeRect(0,0,200,200);
+    // render grid
+    for (var row=0; row<10; row++)
+    for (var col=0; col<10; col++){
+        ctx.strokeRect(col*20,(9-row)*20,20,20);
+    }
+    // render piece
+    
+    ctx.strokeStyle = 'grey';
+    for (var row=0; row<10; row++)
+        for (var col=0; col<10; col++){
+            if (mini_board[row][col] != 'N'){
+                ctx.fillStyle = color_table[mini_board[row][col]];
+                ctx.fillRect(col*20,(9-row)*20,20,20);
+            }
+        }
+}
+
+
+function paint_board(e){
+    
+        var col = Math.floor(e.offsetX/20)
+        var row = 9-Math.floor(e.offsetY/20)
+        if (Record.last_paint == row*10 + col) return
+        Record.last_paint = row*10 + col
+        mini_board[row][col] = 'G'
+    
+        render_mini_board()
+        console.log('clicked',e.offsetX,e.offsetY,Record.last_paint)
+
+}
+
+function erase_board(e){
+    
+    var col = Math.floor(e.offsetX/20)
+    var row = 9-Math.floor(e.offsetY/20)
+
+    mini_board[row][col] = 'N'
+
+    render_mini_board()
+
+}
+
+mini_board_canva = document.getElementById('mini_board_canva')
+mini_board_canva.onmousedown = (e=>{
+    if (e.button == 0){
+        paint_board(e); 
+        render_mini_board();
+        mini_board_canva.onmousemove = (e=>{
+            
+                paint_board(e); 
+                render_mini_board();
+            
+        })
+    }
+    if (e.button == 2){
+        erase_board(e); 
+        render_mini_board();
+        mini_board_canva.onmousemove = (e=>{
+            
+                erase_board(e); 
+                render_mini_board();
+            
+        })
+    }
+})
+
+document.oncontextmenu=(e=>e.preventDefault())
+
+mini_board_canva.onmouseup = mini_board_canva.onmouseout = (e=>{
+    
+    mini_board_canva.onmousemove = (e=>{
+    })
+    
+    Record.last_paint = -1
+})
+
+function save_mini_board(){
+    var partial_map = document.getElementById('field')
+    var started = false
+    var sym = ''
+    var text = ''
+    for (var row=9; row>=0; row--){
+        if (mini_board[row].some(x=>x!='N')){
+            started = true
+        }
+        if (!started){
+            continue
+        }
+        text += sym
+        for (var col=0; col<10; col++){
+            sym = '\n'
+            if (mini_board[row][col] == 'N'){
+               text += '_'
+            }
+            else if (mini_board[row][col] == 'G'){
+                text += 'X'
+            }
+            else{
+                text +=  mini_board[row][col]
+            }
+        } 
+        }
+    partial_map.value = text
+}
 /*
 5. start
 */

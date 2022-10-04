@@ -61,6 +61,34 @@
             </table>
         </div>
     </div>
+    <div id="pcwizard">
+        <div class="settings-container">
+            <h1>PC Wizard</h1>
+            <a class="close-button" href="javascript:void(0);" onclick="close_pcwizard()"></a>
+            <table>
+                <tbody>
+                    <label>Queue: choose a queue</label>
+                    <br>
+                    <button id="game_button" class="mini_button yellow" onclick="document.getElementById('input_queue').value='[IOTSZJL]p7,*p4'">1st pc bag</button>
+                    <button id="game_button" class="mini_button yellow" onclick="document.getElementById('input_queue').value='[IOTSZJL]p1,*p3,*p7'">2nd pc bag</button>
+                    <button id="game_button" class="mini_button yellow" onclick="document.getElementById('input_queue').value='[IOTSZJL]p1,*p7,*p3'">3rd pc bag</button>
+                    <button id="game_button" class="mini_button yellow" onclick="document.getElementById('input_queue').value='[IOTSZJL]p1,*p4,*p6'">4th pc bag</button>
+                    <button id="game_button" class="mini_button yellow" onclick="document.getElementById('input_queue').value='[IOTSZJL]p1,*p1,*p7,*p2'">5th pc bag</button>
+                    <button id="game_button" class="mini_button yellow" onclick="document.getElementById('input_queue').value='[IOTSZJL]p1,*p5,*p5'">6th pc bag</button>
+                    <button id="game_button" class="mini_button yellow" onclick="document.getElementById('input_queue').value='[IOTSZJL]p1,*p2,*p7'">7th pc bag</button>
+                    <br>
+                    <br>
+                    <label>Field: leftclick for garbage, rightclick for empty space</label>
+                    <br>
+                    <canvas id="mini_board_canva" tabindex='1' width="200" height="200" z-index="4"></canvas>
+                    <div id="field_error"></div>
+                    
+                
+                
+                </tbody>
+            </table>
+        </div>
+    </div>
 
     <div class="flex">
         <div id="leftpanel" class="panel">
@@ -89,8 +117,10 @@
                 <select id="input13">
                 </select>
                 <div id="customized" hidden>
+                    <button id='pcwizard_button' class="mini_button green" onclick="toggle_pcwizard()">pc wizard</button>
                     <br>
                     <label>Queue</label>
+                    
                     <input id="input_queue" type="text" size="20" value="I,[IJLOSTZ]p4">
                     <div id="queue_error"> </div>
                     <br>
