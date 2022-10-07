@@ -485,6 +485,7 @@ class Game{
     }
 
     hold(){
+        if (this.bag[0] !='G' && this.holdmino == 'G') return
         var temp = this.holdmino
         this.holdmino = this.bag[0]
         this.bag[0] = temp
@@ -495,6 +496,7 @@ class Game{
         this.bag.shift()
         this.generate()
         this.update()
+        if (this.bag[0] == 'G' && this.holdmino != 'G') this.hold()
     }
     generate(){
         if (this.bag.length < 7){
