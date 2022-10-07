@@ -12,14 +12,14 @@
     </script>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Tetris Quad Puzzle</title>
+    <title>Tetris Tspin Challenge</title>
     <link rel="stylesheet" href="style.css">
     <script src="style-scripts.js"></script>
     
 </head>
 <body>
     <div class="banner">
-        <a class="title" href="/downstack-practice/quad-practice.html"> Tetris Quad Puzzle - Practice</a>
+        <a class="title" href="/downstack-practice/tspin-challenge.html"> Tetris T-Spin Puzzle - Challenge</a>
         <a class="setting_icon" onclick="toggleSettings()"> ⚙️</a>
         <div class="nav">
             <ul class="dropdown">
@@ -31,6 +31,7 @@
                 <li><a href="/downstack-practice/tspin-practice.html">T-Spin Practice</a></li>
                 <li><a href="/downstack-practice/advance-tspin-practice.html">Advanced T-Spin Practice</a></li>
                 <li><a href="/downstack-practice/quad-practice.html">Quad Practice</a></li>
+                
             </ul>
         </div>
         <div class="burger" onclick="toggleBurger()">
@@ -62,41 +63,59 @@
             </table>
         </div>
     </div>
+    <div id="startpanel" >
+        <div id="score" >
+            <div id="score-container" >
+                <h3 id="result2">Solve as much puzzles as possible in 5 minutes</h3>
+                <label>Enter your name to record your achievement: </label>
+                <br>
+                <input id='your_name' type="text">
+                <button class="mini_button green" onclick="submit_score()">submit</button>
+            </div>
+        </div>
+        <h2>Leaderboard</h2>
+        <div id="scrollable" >
+            <table id="leaderboard">
+                <tbody>
 
-    <div class="flex">
+                    <tr> <th width="125">Rank</th> <th width="125">Name</th> <th width="125">Solved Puzzles</th> </tr>
+                    <tr> <td>-</td> <td>-</td> <td>-</td> </tr>
+
+            
+                </tbody>
+            </table>
+        </div>
+        <p id="result">Solve as much puzzles as possible in 5 minutes</p>
+        <button id="game_button" class="game_button green" onclick="start_challenge()">Start Challenge</button>
+    </div>
+    <div class="flex" style="display:none">
+        
         <div id="leftpanel" class="panel">
-
+            
             <h2>Winning Requirement</h2>
             <div id="winning_requirement">
-                <p id="winning_requirement1">Do a Quad</p>
-                <p id="winning_requirement2"><br></p>
+                <p id="winning_requirement1">Do a Tspin Double</p>
+                <p id="winning_requirement2">No Empty Space below Blocks at the end</p>
             </div>
-
+            <button class="game_button purple" onclick="start_challenge(); board.focus()">Restart</button><br>
             <button class="game_button orange" onclick="retry(); board.focus()">Retry</button>
-            <button class="game_button red" onclick="show_ans(); board.focus()">Show Answer</button>
+
 
         </div>
-        <div id="tetris">
+
+        <div id="tetris" >
             <canvas id="board" tabindex='1' width="520" height="610" z-index="4"></canvas>
         </div>
 
         <div id="rightpanel" class="panel">
             
-            <h2>Modes</h2>
-            <button class="game_button cyan" onclick="play_a_quad_map(); board.focus()">Quad Practice</button>
-
-            <button id="game_button" class="game_button yellow" onclick="toggleOptions()">Hide Options</button>
-            <div id="gamemode" class="open">
-                <table>
-                    <tbody>
-                        <tr><td><input id="input13" type="number" min="2" max='7'></td><td>Pieces</td></tr>
-                        <tr><td><input id="input14" type="checkbox" checked="checked"></td><td>Clear line in the solution</td></tr>
-                        <tr><td><input id="input15" type="checkbox" checked="checked"></td><td>More holes in the map</td></tr>
-                        <tr><td><input id="input16" type="checkbox" checked="checked"></td><td>Generate unique pieces</td></tr>
-                        <tr><td><input id="input17" type="checkbox" checked="checked"></td><td>Generate flatter board</td></tr>
-                    </tbody>
-                </table>
+            <h2>Solve as much puzzles as possible</h2>
+            <div id="winning_requirement">
+                <p >Time left: </p>
+                <label id="timer"></label>
             </div>
+
+            
 
         </div>
     </div>
@@ -117,7 +136,7 @@
         <canvas id="mobile_controls"></canvas>
     </div>
     <script src="header.js"></script>
-    <script src="script5.js"></script>
+    <script src="script7.js"></script>
 
 </body>
 </html>

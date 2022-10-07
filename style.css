@@ -106,8 +106,17 @@ a {
 .burger span::after {
     margin-top: 0.6rem;
 }
-
-#setting {
+.setting_icon{
+    z-index: 2;
+    position: absolute;
+    width: 3rem;
+    height: 3rem;
+    top: 1rem;
+    right: 5rem;
+    padding: 0.5rem;
+    cursor: pointer;
+}
+#setting, #score {
     display: none;
     z-index: 100;
     height: 100vh;
@@ -118,7 +127,7 @@ a {
     background-color: rgba(0, 0, 0, 0.75);
     color: #dcddde;
 }
-#setting.open {
+#setting.open, #score.open {
     display: block;
 }
 
@@ -148,7 +157,7 @@ a {
     transform: rotate(-45deg);
 }  
 
-.settings-container {
+.settings-container, #score-container{
     border: 0.2rem solid #dcddde;
     background-color: #363941;
     padding: 2rem 5rem;
@@ -298,7 +307,7 @@ button.game_button:focus{
     padding: 0.3rem;
 }
 
-#winning_requirement{
+#result, #winning_requirement{
     padding: 1rem;
     /* background-color: rgba(66, 175, 225, 0.2); */
     background-color: #2a2c30;
@@ -407,3 +416,33 @@ select#input13, select#pcwizard_option {
     touch-action: manipulation;
     
 }
+
+#startpanel {
+    padding:0px 50px 0px 50px; 
+    color: #ddd;
+    
+}
+#scrollable{   overflow:auto;
+    height:50vh;
+}
+#leaderboard {
+    background-color: #1d2a35;
+    border-collapse: collapse;
+    width: 100%;
+    
+  }
+  
+#leaderboard td, #leaderboard th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+    color: #ddd;
+  }
+  
+
+#leaderboard tr:nth-child(odd) {
+    background-color: #38444d;
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #dddddd
+  }
