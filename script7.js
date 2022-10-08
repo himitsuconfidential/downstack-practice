@@ -300,7 +300,6 @@ function update_keybind(){
 
 function set_event_listener(){
     document.onkeydown = (e => {
-        if (!Config.started) return
         console.log('down',e.code)
         var func = Keybind.keydown[e.code];
 
@@ -312,6 +311,7 @@ function set_event_listener(){
             
         }
         if (document.activeElement.tagName != 'INPUT' && func != undefined){
+            if (!Config.started) return
             board.focus()
             func()
         }
