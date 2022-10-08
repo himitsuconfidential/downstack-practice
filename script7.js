@@ -1089,6 +1089,7 @@ function submit_score(){
     var name = document.getElementById('your_name').value.toUpperCase()
     if (name == ''){
         name = 'UNNAMED'
+    }
     if (database[name]==undefined || Config.no_of_success > database[name])
         patch_leaderboard()
     document.getElementById('score').classList.remove('open')
