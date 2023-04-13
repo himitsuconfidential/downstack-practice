@@ -1105,7 +1105,6 @@ function all_grounded(){
     return true
 }
 
-
 function detect_win(){
     if (game.total_piece == 1){
         Config.no_of_trial += 1
@@ -1141,9 +1140,15 @@ function show_ans(){
         game.board = clone(Record.board[Record.board.length-1])
         render()
         setTimeout(retry, 3000)
-}
+    }
 }
 
+function show_hint(){
+    
+    document.getElementById('hint_button').textContent = Record.piece_added[Record.piece_added.length-1] + " piece , then " + Record.piece_added[Record.piece_added.length-2] + " piece"
+    setTimeout(()=>{document.getElementById('hint_button').textContent = "Show Hint"}, 3000)
+    
+}
 
 /*
 5. start
