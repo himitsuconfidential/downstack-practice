@@ -1105,6 +1105,7 @@ function all_grounded(){
     return true
 }
 
+
 function detect_win(){
     if (game.total_piece == 1){
         Config.no_of_trial += 1
