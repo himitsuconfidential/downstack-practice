@@ -476,21 +476,23 @@ function add_random_line(){
     
     var row_index = Math.floor(Math.random()*(max_height+2))
     Record.added_line = []
+
+    probability = (Config.mode == "downstack")? [0.1,0.15,0.3,0.7] :[0.1,0.15,0.3,1]
     var rng = Math.random()
-    if (rng<0.1){
+    if (rng<probability[0]){
         add_line(row_index)
         add_line(row_index+1)
         add_line(row_index+2)
     }
-    else if (rng<0.15 && row_index < max_height+1){
+    else if (rng<probability[1]&& row_index < max_height+1){
         add_line(row_index)
         add_line(row_index+2)
     }
-    else if (rng<0.3){
+    else if (rng<probability[2]){
         add_line(row_index)
         add_line(row_index+1)
     }
-    else{
+    else if (rng<probability[3]){
         add_line(row_index)
     }
 }
@@ -510,17 +512,19 @@ function add_random_line_less_skim(){
             break}
     var row_index = garbage_height
     Record.added_line = []
+
+    probability = (Config.mode == "downstack")? [0.1,0.3,0.7]  :[0.1,0.3,1]
     var rng = Math.random()
-    if (rng<0.1){
+    if (rng<probability[0]){
         add_line(row_index)
         add_line(row_index+1)
         add_line(row_index+2)
     }
-    else if (rng<0.3){
+    else if (rng<probability[1]){
         add_line(row_index)
         add_line(row_index+1)
     }
-    else{
+    else if (rng<probability[2]){
         add_line(row_index)
     }
 }
@@ -692,6 +696,24 @@ function is_few_non_cheese_hole(){
         if (height_copy[8] - height_copy[1] > 5)
             return false
     }
+    if (Config.mode == 'downstack'){
+        lowest_gap_col = 0
+        for (var col_idx=0; col_idx<10; col_idx++){
+            if (game.board[0][col_idx] != 'G')
+                lowest_gap_col = col_idx
+        }
+        lowest_gap_height = 0
+        for (var row_idx=0; row_idx<20; row_idx++){
+            if (game.board[row_idx][lowest_gap_col] != 'G')
+                lowest_gap_height = row_idx
+            else
+                break
+        }  
+        console.log(height[lowest_gap_col] - lowest_gap_height)
+        if (height[lowest_gap_col] - lowest_gap_height < 2) return false
+    }
+
+
 
     var holes = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     var non_garbages = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -828,6 +850,7 @@ function try_a_move(){
         return false}
 }
 
+
 function is_good_queue(queue){
     var accum = []
     var count = 1
@@ -885,7 +908,7 @@ function generate_final_map(){
 
     if (Config.mode == 'combopc'){
         return true}
-    else if (Config.mode == 'combo'){
+    else if (Config.mode == 'combo' || Config.mode == 'downstack'){
         var height = []
         for (var i=0; i<10; i++){
             height.push(Math.floor(Math.random()*3))}
@@ -1060,17 +1083,40 @@ function play_a_combotsd_map(){
     document.getElementById('winning_requirement2').innerHTML = 'Tspin Double at the end'
 }
 
+function play_a_downstack_map(){
+    play_a_map('downstack')
+    document.getElementById('winning_requirement1').innerHTML = 'No Empty Space below Blocks at the end'
+    document.getElementById('winning_requirement2').innerHTML = 'It means open all garbage holes'
+}
+
+function all_grounded(){
+    for (var col_idx=0; col_idx<10; col_idx++) {
+        var is_grounded = true
+        for (var row_idx=0; row_idx<20; row_idx++){
+            if (game.board[row_idx][col_idx] != 'N'){
+                if (!is_grounded){
+                return false}
+
+            }
+            else{
+                is_grounded = false}
+        }
+    }
+    return true
+}
+
 function detect_win(){
     if (game.total_piece == 1){
         Config.no_of_trial += 1
     }
     if (game.total_piece == Config.no_of_piece){
         
-        if ((game.combo == Config.no_of_piece-1) &&
+        if ((Config.mode == 'downstack' && all_grounded())||
+        ((game.combo == Config.no_of_piece-1) &&
         ((Config.mode == 'combo')||
         (Config.mode == 'combopc' && game.pc)||
         (Config.mode == 'comboquad' && game.line_clear == 4)||
-        (Config.mode == 'combotsd' && game.line_clear == 2 && game.b2b >= 0))){
+        (Config.mode == 'combotsd' && game.line_clear == 2 && game.b2b >= 0)))){
             sound['win'].play()
             if (Config.auto_next_ind){
                 play_a_map()}
