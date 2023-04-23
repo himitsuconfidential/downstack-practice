@@ -719,7 +719,7 @@ function is_few_non_cheese_hole(){
         if (! is_cheese_level){
             no_of_non_cheese_holes += hole
         }
-    }
+    }console.log(Config.mdhole_ind,no_of_non_cheese_holes,Config.no_of_unreserved_piece,Record.piece_added.length,Config.no_of_unreserved_piece - Record.piece_added.length - (!Config.mdhole_ind) + 2*(Config.no_of_unreserved_piece<2))
     return no_of_non_cheese_holes <= Config.no_of_unreserved_piece - Record.piece_added.length - (!Config.mdhole_ind) + 2*(Config.no_of_unreserved_piece<2)
 }
 
@@ -766,9 +766,7 @@ function is_even_distributed(bag){
     if (Config.unqiue_ind){
         limit = {I:1, O:1, T:1, J:1, L:1, Z:1, S:1}
     }
-    if (Config.mode == 'dt'){
-        limit.T -= 2}
-    else if (Config.mode == 'cspin'){
+    if (Config.mode == 'dt' || Config.mode == 'cspin' || Config.mode == 'fractal'){
         limit.T -= 2}
     else if (Config.mode == 'cspinquad'){
         limit.T -= 2
@@ -871,9 +869,9 @@ function get_shuffled_holdable_queue(queue){
 // 4.4 shuffle queue and play / restart
 function play(){
     game = new Game()
-    Record.done_quad = false
-    Record.done_tst = false
-    Record.done_tsd = false
+    Record.done_quad = 0
+    Record.done_tst = 0
+    Record.done_tsd = 0
     game.bag = Record.shuffled_queue.concat(['G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G'])
     game.update()
     game.holdmino = ''
@@ -890,8 +888,54 @@ function generate_final_map(){
     
     game = new Game()
 
-    
-    if (Config.mode=='dt'){
+    if (Config.mode == 'fractal'){
+        var height = []
+        for (var i=0; i<10; i++)
+            height.push(Math.floor(Math.random()*2)+5)
+        var tsd_col = Math.floor(Math.random()*8)+1
+        height[tsd_col] = 0
+        if (tsd_col == 1){
+            is_left = false}
+        else if (tsd_col == 8){
+            is_left = true}
+        else{
+            is_left = Math.floor(Math.random()*2)}
+        var sign_left = is_left==1? 1:-1
+        height[tsd_col + (sign_left)] = 3
+        for (var j=0; j<20; j++){
+            for (var i=0; i<10; i++){
+                if (j < height[i]){
+                    game.board[j][i] = 'G'}}}
+        game.board[3][tsd_col - 1] = 'N'
+        game.board[3][tsd_col + 1] = 'N'
+        game.board[1][tsd_col - 1] = 'N'
+        game.board[1][tsd_col + 1] = 'N'
+        
+        if (is_left){
+            game.board[4][tsd_col-1] = 'G'
+            game.board[2][tsd_col-2] = 'G'
+            game.board[3][tsd_col-2] = 'G'
+            game.board[4][tsd_col-2] = 'G'
+        }
+        else{
+            game.board[4][tsd_col+1] = 'G'
+            game.board[2][tsd_col+2] = 'G'
+            game.board[3][tsd_col+2] = 'G'
+            game.board[4][tsd_col+2] = 'G'
+        }
+        var lines_add = Math.floor(Math.random()*3)
+        var is_tsd_col = Math.floor(Math.random()*2)
+        var col_add = (is_tsd_col == 1)? tsd_col: Math.floor(Math.random()*10)
+
+        for (var row_idx=0; row_idx<lines_add; row_idx++){
+            add_line(row_idx)
+            game.board[row_idx][col_add]='N'
+        }
+        
+        Record.added_line=[]
+
+    }
+    else if (Config.mode=='dt'){
         //create random landsacpe
         var height = []
         for (var i=0; i<10; i++)
@@ -1180,10 +1224,7 @@ function play_a_map(mode = null){
         }
         if (generate_a_ds_map(Config.no_of_unreserved_piece) && game.get_max_height() < 17){
             var queue = [...Record.piece_added].reverse()	
-            if (Config.mode == 'cspin'){	
-                queue.push('T')
-                queue.push('T')}	
-            else if (Config.mode == 'dt'){	
+            if (Config.mode == 'cspin' || Config.mode == 'dt' || Config.mode == 'fractal'){	
                 queue.push('T')
                 queue.push('T')}	
             else if (Config.mode == 'cspinquad'){	
@@ -1217,16 +1258,24 @@ function play_a_map(mode = null){
 
 function play_a_dt_map(){
     play_a_map('dt')
-    
+    document.getElementById('winning_requirement1').innerHTML = 'Do a Tspin Double'
+    document.getElementById('winning_requirement2').innerHTML = 'Do a Tspin Triple'
 }
 
 function play_a_cspin_map(){
     play_a_map('cspin')
-    
+    document.getElementById('winning_requirement1').innerHTML = 'Do a Tspin Double'
+    document.getElementById('winning_requirement2').innerHTML = 'Do a Tspin Triple'  
 }
 function play_a_cspinquad_map(){
     play_a_map('cspinquad')
-    
+    document.getElementById('winning_requirement1').innerHTML = 'Do a Tspin Double'
+    document.getElementById('winning_requirement2').innerHTML = 'Do a Tspin Triple'
+}
+function play_a_fractal_map(){
+    play_a_map('fractal')
+    document.getElementById('winning_requirement1').innerHTML = 'Do 2 Tspin Double'
+    document.getElementById('winning_requirement2').innerHTML = ''
 }
 function all_grounded(){
     for (var col_idx=0; col_idx<10; col_idx++) {
@@ -1248,14 +1297,15 @@ function detect_win(){
     if (game.total_piece == 1){
         Config.no_of_trial += 1}
     console.log(Config.mode,Record.done_tsd,Record.done_quad)
-    if (game.line_clear == 2 && game.b2b >= 0) Record.done_tsd = true
-    if (game.line_clear == 3 && game.b2b >= 0) Record.done_tst = true
-    if (game.line_clear == 4) Record.done_quad = true
+    if (game.line_clear == 2 && game.b2b >= 0) Record.done_tsd++
+    if (game.line_clear == 3 && game.b2b >= 0) Record.done_tst++
+    if (game.line_clear == 4) Record.done_quad++
 
     if (game.total_piece == Config.no_of_piece){
         if ((Config.mode == 'cspin' && Record.done_tsd && Record.done_tst) ||
             (Config.mode == 'dt' && Record.done_tsd && Record.done_tst) ||
-            (Config.mode == 'cspinquad' && Record.done_tsd && Record.done_tst && Record.done_quad)){
+            (Config.mode == 'cspinquad' && Record.done_tsd && Record.done_tst && Record.done_quad) ||
+            ( Config.mode == 'fractal' && Record.done_tsd >=2)){
                 sound['win'].play()
                 if (Config.auto_next_ind){
                     play_a_map()}
