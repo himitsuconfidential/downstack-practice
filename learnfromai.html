@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QCQK6ZQ0DE"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-QCQK6ZQ0DE');
+    </script>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Tetris Perfect Clear Puzzle</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="style-scripts.js"></script>
+    
+</head>
+<body>
+    <div class="banner">
+        <h1 hidden> PC Puzzle</h1>
+        <a class="title" href="/downstack-practice/pc-practice.html"> Tetris Perfect Clear Puzzle - Practice</a>
+        <a class="setting_icon" onclick="toggleSettings()"> ⚙️</a>
+        <div class="nav">
+            <ul class="dropdown">
+                <li><a href="javascript:void(0);" onclick="toggleSettings()">Settings</a></li>
+                <li><a href="/downstack-practice/tspin-challenge.html">T-Spin Challenge</a></li>
+                <li><a href="/downstack-practice/">Downstack Practice</a></li>
+                <li><a href="/downstack-practice/pc-practice.html">Mid-game PC Practice</a></li>
+                <li><a href="/downstack-practice/usermode.html">Usermode (Includes PC Practice)</a></li>
+                <li><a href="/downstack-practice/tspin-practice.html">T-Spin Practice</a></li>
+                <li><a href="/downstack-practice/advance-tspin-practice.html">Advanced T-Spin Practice</a></li>
+                <li><a href="/downstack-practice/quad-practice.html">Quad Practice</a></li>
+            </ul>
+        </div>
+        <div class="burger" onclick="toggleBurger()">
+            <span></span>
+        </div>
+    </div>
+
+    <div id="setting">
+        <div class="settings-container">
+            <h1>Settings</h1>
+            <a class="close-button" href="javascript:void(0);" onclick="closeSettings()"></a>
+            <table>
+                <tbody>
+                <tr><td class="setting-label">Move Left</td><td><input class='keybind' id="input1" type="text" size="7" value="" readOnly></td></tr>
+                <tr><td class="setting-label">Move Right</td><td><input class='keybind' id="input2" type="text" size="7" value="" readOnly></td></tr>
+                <tr><td class="setting-label">Soft Drop</td><td><input class='keybind' id="input3" type="text" size="7" value="" readOnly></td></tr>
+                <tr><td class="setting-label">Hard Drop</td><td><input class='keybind' id="input4" type="text" size="7" value="" readOnly></td></tr>
+                <tr><td class="setting-label">Rotate Left</td><td><input class='keybind' id="input5" type="text" size="7" value="" readOnly></td></tr>
+                <tr><td class="setting-label">Rotate Right</td><td><input class='keybind' id="input6" type="text" size="7" value="" readOnly></td></tr>
+                <tr><td class="setting-label">Rotate 180</td><td><input class='keybind' id="input7" type="text" size="7" value="" readOnly></td></tr>
+                <tr><td class="setting-label">Hold</td><td><input class='keybind' id="input8" type="text" size="7" value="" readOnly></td></tr>
+                <tr><td class="setting-label">Retry</td><td><input class='keybind' id="input9" type="text" size="7" value="" readOnly></td></tr>
+                <tr><td class="setting-label">Show Answer</td><td><input class='keybind' id="input10" type="text" size="7" value="" readOnly></td></tr>
+                <tr><td class="setting-label">DAS (1 to 200)</td><td><input id="input11" type="number" min="1" max='200'></td></tr>
+                <tr><td class="setting-label">ARR (0 to 100)</td><td><input id="input12" type="number" min="0" max='100'></td></tr>
+                <tr><td class="setting-label">Generate New Map on Win</td><td><input id="input12.1" type="checkbox" min="0" max='100'></td></tr>
+                
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div id="leftpanel" class="panel">
+
+            <h2>Winning Requirement</h2>
+            <div id="winning_requirement">
+                <p id="winning_requirement1"></p>
+                <p id="winning_requirement2"></p>
+                <p id="winning_requirement3"></p>
+                <p id="winning_requirement4"></p>
+
+            </div>
+
+            <button class="game_button orange" onclick="retry(); board.focus()">Retry</button>
+
+        </div>
+        <div id="tetris">
+            <canvas id="board" tabindex='1' width="520" height="610" z-index="4"></canvas>
+        </div>
+
+        <div id="rightpanel" class="panel">
+            
+            <h2>Select level</h2>
+            <div id="gamemode" class="open"> 
+                <h3 id='input13'>Loading levels</h3>
+                <span id="field_error"></span>
+            <div id="scrollable" >
+
+            </div>
+
+        </div>
+    </div>
+
+    <div id = "tcc" style class = "tc">
+        <div>
+            <span id="tc-dr">180</span>
+            <span id="tc-h">⇄</span>
+            <span id="tc-hd">⤓</span>
+            </div>
+            <div>
+            <span id="tc-l">←</span>
+            <span id="tc-r">→</span>
+            <span id="tc-d">↓</span>
+            <span id="tc-cc">↰</span>
+            <span id="tc-c">↱</span>
+            </div>
+        <canvas id="mobile_controls"></canvas>
+    </div>
+    <script src="header.js"></script>
+    <script src="script8.js"></script>
+
+</body>
+</html>
