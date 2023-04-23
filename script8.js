@@ -624,4 +624,4 @@ function initialize(){
     
 }
 
-setTimeout(initialize,100)
+setTimeout(initialize,1000)
