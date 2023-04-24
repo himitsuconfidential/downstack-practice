@@ -719,7 +719,7 @@ function is_few_non_cheese_hole(){
         if (! is_cheese_level){
             no_of_non_cheese_holes += hole
         }
-    }console.log(Config.mdhole_ind,no_of_non_cheese_holes,Config.no_of_unreserved_piece,Record.piece_added.length,Config.no_of_unreserved_piece - Record.piece_added.length - (!Config.mdhole_ind) + 2*(Config.no_of_unreserved_piece<2))
+    }//console.log(Config.mdhole_ind,no_of_non_cheese_holes,Config.no_of_unreserved_piece,Record.piece_added.length,Config.no_of_unreserved_piece - Record.piece_added.length - (!Config.mdhole_ind) + 2*(Config.no_of_unreserved_piece<2))
     return no_of_non_cheese_holes <= Config.no_of_unreserved_piece - Record.piece_added.length - (!Config.mdhole_ind) + 2*(Config.no_of_unreserved_piece<2)
 }
 
@@ -766,7 +766,7 @@ function is_even_distributed(bag){
     if (Config.unqiue_ind){
         limit = {I:1, O:1, T:1, J:1, L:1, Z:1, S:1}
     }
-    if (Config.mode == 'dt' || Config.mode == 'cspin' || Config.mode == 'fractal'){
+    if (Config.mode == 'dt' || Config.mode == 'cspin' || Config.mode == 'fractal' || Config.mode == 'stsd'){
         limit.T -= 2}
     else if (Config.mode == 'cspinquad'){
         limit.T -= 2
@@ -1171,6 +1171,90 @@ function generate_final_map(){
         Record.added_line=[]
 
     }
+    else if (Config.mode=='stsd'){
+        //create random landsacpe
+        var height = []
+        for (var i=0; i<10; i++)
+            height.push(Math.floor(Math.random()*3)+5)
+
+        //create dt hole
+        var is_right = Math.floor(Math.random()*2) == 0 //overhang is left?
+        if (is_right){
+            var tsd_col = Math.floor(Math.random()*6)+2 //2 to 7
+            if (Math.floor(Math.random()*2) == 0){
+                for (var i=0; i<10; i++){
+                    height[i]+=1
+                }
+                height[tsd_col-1]-=1
+                height[tsd_col-2]-=1
+            }      
+        }
+        else{
+            var tsd_col = Math.floor(Math.random()*6)+2
+            if (Math.floor(Math.random()*2) == 0){
+                for (var i=0; i<10; i++){
+                    height[i]+=1
+                }
+                height[tsd_col+1]-=1
+                height[tsd_col+2]-=1
+            }     
+        }
+ 
+        for (var j=0; j<20; j++){
+            for (var i=0; i<10; i++){
+                if (j < height[i]){
+                    game.board[j][i] = 'G'}}}
+
+        if (is_right){
+            var garbage_pos = ['GNNG','GNNG','GGNG','NNNG','NNGG',]//['GNNG','GNNG','GGNG','NNNG','NNGG','NNNN','NNNN']
+            for (var row_idx=0; row_idx<5;row_idx++){
+                for (var col_idx=0; col_idx<4;col_idx++){
+                    game.board[row_idx][tsd_col-2+col_idx]= garbage_pos[row_idx][col_idx]
+                }
+            }
+            var kick_col = tsd_col-3
+            game.board[5][tsd_col-2] = 'N'
+            game.board[5][tsd_col-1] = 'N'
+            game.board[6][tsd_col-2] = 'N'
+            game.board[6][tsd_col-1] = 'N'
+        }
+        else{
+            var garbage_pos = ['GNNG','GNNG','GNGG','GNNN','GGNN',]//['GNNG','GNNG','GNGG','GNNN','GGNN','NNNN','NNNN']
+            for (var row_idx=0; row_idx<5;row_idx++){
+                for (var col_idx=0; col_idx<4;col_idx++){
+                    game.board[row_idx][tsd_col-1+col_idx]= garbage_pos[row_idx][col_idx]
+                }
+            }
+            var kick_col = tsd_col+3
+            game.board[5][tsd_col+1] = 'N'
+            game.board[5][tsd_col+2] = 'N'
+            game.board[6][tsd_col+1] = 'N'
+            game.board[6][tsd_col+2] = 'N'
+
+        }
+        if (kick_col>=0 && kick_col<10){
+            game.board[3][kick_col] = 'G'
+            game.board[4][kick_col] = 'G'
+            
+        }
+
+        
+        var lines_add = Math.floor(Math.random()*3)+2
+        var col_add = Math.floor(Math.random()*2)+1
+
+        if (is_right){
+            col_add = tsd_col-col_add
+        }
+        else{
+            col_add = tsd_col+col_add
+        }
+        for (var row_idx=0; row_idx<lines_add; row_idx++){
+            add_line(row_idx)
+            game.board[row_idx][col_add]='N'
+        }
+        
+        Record.added_line=[]
+    }
 }
 count = 0
 last_info = 'null'
@@ -1224,7 +1308,7 @@ function play_a_map(mode = null){
         }
         if (generate_a_ds_map(Config.no_of_unreserved_piece) && game.get_max_height() < 17){
             var queue = [...Record.piece_added].reverse()	
-            if (Config.mode == 'cspin' || Config.mode == 'dt' || Config.mode == 'fractal'){	
+            if (Config.mode == 'cspin' || Config.mode == 'dt' || Config.mode == 'fractal' || Config.mode == 'stsd'){	
                 queue.push('T')
                 queue.push('T')}	
             else if (Config.mode == 'cspinquad'){	
@@ -1277,6 +1361,11 @@ function play_a_fractal_map(){
     document.getElementById('winning_requirement1').innerHTML = 'Do 2 Tspin Double'
     document.getElementById('winning_requirement2').innerHTML = ''
 }
+function play_a_stsd_map(){
+    play_a_map('stsd')
+    document.getElementById('winning_requirement1').innerHTML = 'Do 2 Tspin Double'
+    document.getElementById('winning_requirement2').innerHTML = ''
+}
 function all_grounded(){
     for (var col_idx=0; col_idx<10; col_idx++) {
         var is_grounded = true
@@ -1305,7 +1394,8 @@ function detect_win(){
         if ((Config.mode == 'cspin' && Record.done_tsd && Record.done_tst) ||
             (Config.mode == 'dt' && Record.done_tsd && Record.done_tst) ||
             (Config.mode == 'cspinquad' && Record.done_tsd && Record.done_tst && Record.done_quad) ||
-            ( Config.mode == 'fractal' && Record.done_tsd >=2)){
+            (Config.mode == 'fractal' && Record.done_tsd >=2) ||
+            (Config.mode == 'stsd' && Record.done_tsd >=2)){
                 sound['win'].play()
                 if (Config.auto_next_ind){
                     play_a_map()}
