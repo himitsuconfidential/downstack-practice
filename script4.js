@@ -3,7 +3,7 @@ var game = new Game();
 console.log(game.tetramino, JSON.stringify(game.to_shape()))
 const Keybind = {'keydown':{}, 'keyup':{}}
 var Config = {'das':100, 'arr':0, 'delay':0, 'pressing_left':false, 'pressing_right': false, 'pressing_down': false, 'pressing':{},
-'skim_ind':false, 'mdhole_ind':false, 'unqiue_ind':true, 'smooth_ind':true, 'donate_ind':false, 'zero9_ind': false, 'auto_next_ind':true,
+'skim_ind':false, 'mdhole_ind':false, 'unqiue_ind':true, 'smooth_ind':true, 'donate_ind':false, 'zero9_ind': false, 'six3_ind': false, 'auto_next_ind':true,
 'mode':'prepare', 'no_of_unreserved_piece':7, 'no_of_piece':7,
 'no_of_trial':0, 'no_of_success':0}
 var Customized_key = ['ArrowLeft','ArrowRight','ArrowDown','Space','KeyZ','KeyX','KeyA','ShiftLeft','KeyR','KeyP']
@@ -72,6 +72,7 @@ function load_gamemode(){
     document.getElementById('input17').checked = Config.smooth_ind
     document.getElementById('input18').checked = Config.donate_ind
     document.getElementById('input19').checked = Config.zero9_ind
+    document.getElementById('input20').checked = Config.six3_ind
 }
 
 
@@ -112,6 +113,7 @@ function save_gamemode(){
     Config.smooth_ind = document.getElementById('input17').checked
     Config.donate_ind = document.getElementById('input18').checked
     Config.zero9_ind = document.getElementById('input19').checked
+    Config.six3_ind = document.getElementById('input20').checked
 }
 
 /*
@@ -372,7 +374,8 @@ function set_event_listener(){
     document.getElementById('input16').onchange = e=>{save_gamemode()}
     document.getElementById('input17').onchange = e=>{save_gamemode()}
     document.getElementById('input18').onchange = e=>{save_gamemode()}
-    document.getElementById('input19').onchange = e=>{save_gamemode()}
+    document.getElementById('input19').onchange = e=>{document.getElementById('input20').checked = false;save_gamemode()}
+    document.getElementById('input20').onchange = e=>{document.getElementById('input19').checked = false;save_gamemode()}
     const ua = navigator.userAgent;
     if (/(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i.test(ua)) {
         document.getElementById('board').onblur = (e=>e.preventDefault())
@@ -893,7 +896,7 @@ function generate_final_map(){
         var height = []
         for (var i=0; i<10; i++)
             height.push(Math.floor(Math.random()*3)+2)
-        var tsd_col = Math.floor(Math.random()*8)+1
+        var tsd_col = Config.six3_ind? Math.floor(Math.random()*2+1)*3 : Math.floor(Math.random()*8)+1
         height[tsd_col] = 0
         if (tsd_col == 1){
             is_left = false}
@@ -925,18 +928,24 @@ function generate_final_map(){
         var lines_add = (Config.mode == 'tsd')? Math.floor(Math.random()*3): 4
         var is_tsd_col = (Config.donate_ind)? 0: Math.floor(Math.random()*2)
         var col_add = (is_tsd_col == 1)? tsd_col: Math.floor(Math.random()*10)
-        //col_add cannot be the same as overhang
-        if (col_add == tsd_col-1*sign_left || col_add == tsd_col-2*sign_left){
-            col_add = tsd_col
-        }
+
+        
         if (Config.zero9_ind){
-            col_add = 0
+            col_add = Math.random() > 0.5? 0: 9
+        }
+        else if (Config.six3_ind){
+            col_add = Math.random() > 0.5? 3: 6
         }
         else if (Config.donate_ind && col_add == tsd_col){
             col_add = tsd_col+1*sign_left
         }
 
-        if (Config.zero9_ind){
+        //col_add cannot be the same as overhang
+        if (col_add == tsd_col-1*sign_left || col_add == tsd_col-2*sign_left){
+            col_add = tsd_col
+        }
+
+        if (Config.zero9_ind || Config.six3_ind){
             lines_add = 4
         }
         else if (Config.donate_ind && lines_add==0){
