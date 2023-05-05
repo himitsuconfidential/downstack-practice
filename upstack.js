@@ -1035,7 +1035,7 @@ function detect_win(){
     if (Config.mode == 'quad' && Record.quad==3 && game.board.every(row=>row[Config.blank_col]=="N")){
         sound['win'].play()
         if (Config.auto_next_ind){
-            play_3_quad_map()}
+            play_3_quad_map(Config.quad_col)}
         Config.no_of_success += 1
         }
     else if (game.total_piece == 21){
