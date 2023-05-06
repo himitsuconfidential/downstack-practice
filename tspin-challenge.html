@@ -72,8 +72,8 @@
                 <label>Enter your nickname to record your achievement: </label>
                 <label>[Reminder: dont enter your real name or personal information here]</label>
                 <br>
-                <input id='your_name' type="text">
-                <button class="mini_button green" onclick="submit_score()">submit</button>
+                <input id='your_name' type="text" maxlength="30">
+                <button class="mini_button green" onclick="this.previousElementSibling.value = this.previousElementSibling.value.slice(0,30);submit_score()">submit</button>
             </div>
         </div>
         <h2>Leaderboard</h2>
