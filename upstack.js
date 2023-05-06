@@ -456,7 +456,7 @@ Record={
     ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'],
     ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N']],
     quad: 0,
-    
+    tsd: 0,
 }
 
 // 4.1 add line
@@ -690,7 +690,7 @@ function is_few_non_cheese_hole(){
         if (! is_smooth(height))
          return false
         var height_copy = [...height].sort(function(a, b){return a - b})
-        if (height_copy[8] - height_copy[1] > 7)
+        if (height_copy[8] - height_copy[1] > 5 || height_copy[9] - height_copy[1] > 7 || height_copy[9] - height_copy[8] >3)
             return false
     }
 
@@ -864,6 +864,7 @@ function get_shuffled_holdable_queue(queue){
 function play(){
     game = new Game()
     Record.quad = 0
+    Record.tsd = 0
     game.bag = Record.queue_rounds.concat(['G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G'])
     game.update()
     game.holdmino = ''
@@ -1023,7 +1024,7 @@ function play_3_quad_map(quad_col=0){
 
     }
 
-    document.getElementById('winning_requirement1').innerHTML = 'Do 3 Quad'
+    document.getElementById('winning_requirement1').innerHTML = 'Do 3 Quad (or tsd)'
     document.getElementById('winning_requirement2').innerHTML = 'Leave column '+(Config.blank_col+1)+' empty at the end'
 }
 
@@ -1031,8 +1032,9 @@ function detect_win(){
     if (game.total_piece == 1){
         Config.no_of_trial += 1
     }
+    if (game.line_clear == 2 && game.b2b >= 0) Record.tsd++
     if (game.line_clear == 4) Record.quad++
-    if (Config.mode == 'quad' && Record.quad==3 && game.board.every(row=>row[Config.blank_col]=="N")){
+    if (Config.mode == 'quad' && Record.tsd+Record.quad >= 3 && game.board.every(row=>row[Config.blank_col]=="N")){
         sound['win'].play()
         if (Config.auto_next_ind){
             play_3_quad_map(Config.quad_col)}
