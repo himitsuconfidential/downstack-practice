@@ -11,6 +11,10 @@ a {
     text-decoration: none;
 }
 
+* {
+  touch-action: manipulation;
+}
+
 .flex{
     display: flex;
     justify-content: center;
