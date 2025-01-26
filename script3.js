@@ -315,9 +315,9 @@ function update_keybind(){
     Keybind.keyup[Customized_key[2]] = e=>{release_down(true)}
 
     add_generic_keybind(Customized_key[3], ()=> (game.harddrop(), play_sound(), detect_win()))
-    add_generic_keybind(Customized_key[4], ()=> game.rotate_anticlockwise())
-    add_generic_keybind(Customized_key[5], ()=> game.rotate_clockwise())
-    add_generic_keybind(Customized_key[6], ()=> game.rotate_180())
+    add_generic_keybind(Customized_key[4], ()=> (game.rotate_anticlockwise(), game.tetramino == 'O'? game.drop(factor=1):''))
+    add_generic_keybind(Customized_key[5], ()=> (game.rotate_clockwise(), game.tetramino == 'O'? game.drop(factor=1):''))
+    add_generic_keybind(Customized_key[6], ()=> (game.rotate_180(), game.tetramino == 'O'? game.drop(factor=1):''))
     add_generic_keybind(Customized_key[7], ()=> game.hold())
     add_generic_keybind(Customized_key[8], ()=> retry())
     add_generic_keybind(Customized_key[9], ()=> pcfinder())
@@ -490,7 +490,7 @@ function play(){
     game.bag = Record.piece_added.concat(['G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G'])
     game.update()
     game.holdmino = ''
-    
+    game.hold()
     
 }
 

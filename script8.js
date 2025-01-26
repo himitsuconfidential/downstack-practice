@@ -505,7 +505,7 @@ function play(){
     game.bag = Record.piece_added.concat(['G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G'])
     game.update()
     game.holdmino = ''
-    
+    game.hold()
     
 }
 

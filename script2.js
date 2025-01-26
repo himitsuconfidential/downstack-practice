@@ -818,6 +818,7 @@ function play(){
     game.bag = Record.shuffled_queue.concat(['G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G'])
     game.update()
     game.holdmino = ''
+    game.hold()
     if ((Record.board.length)>0){
         game.board = clone(Record.board[Record.board.length-1])
         for (var row_idx=0; row_idx<20; row_idx++){
