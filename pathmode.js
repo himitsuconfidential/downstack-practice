@@ -513,23 +513,13 @@ function play_a_map(mode = null) {
     Config.no_of_piece = pathMinimalQueues[0][0].length;
     game.board = last_output;
     Record.finished_map = clone(game.board)
-
-    if (pathMinimalStrictMode) {
-        Record.piece_added = get_next_path_minimal_queue(pathMinimalQueuesWeightTable)
-    } else{
-        Record.piece_added = get_next_path_queue(pathQueues)
-    }
-
+    Record.piece_added = get_next_path_minimal_queue(pathMinimalQueuesWeightTable)
 
     play()
     render()
 
 }
 
-// TODO write this function
-function get_next_path_queue(queues) {
-   return queues[0][0]
-}
 function get_next_path_minimal_queue(queues) {
     console.log('in get_next_path_minimal_queue')
     if(distributedQueues) {
@@ -811,17 +801,11 @@ function save_wizard() {
 }
 
 //alternatively, just update all of them when one of them changes?
+// the variable distributedQueues keeps track of how we order the queues.
 const distributedQueuesButton = document.getElementById('toggleDistributedQueues')
 let distributedQueues = distributedQueuesButton.checked;
 distributedQueuesButton.addEventListener('change', function () {
     distributedQueues = distributedQueuesButton.checked;
-})
-
-const pathMinStrictButton = document.getElementById('togglePathMinimalStrictMode')
-let pathMinimalStrictMode = pathMinStrictButton.checked;
-pathMinStrictButton.addEventListener('change', function () {
-    pathMinimalStrictMode = pathMinStrictButton.checked;
-    console.log('test');
 })
 
 var last_output
