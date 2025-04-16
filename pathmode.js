@@ -520,6 +520,149 @@ function play_a_map(mode = null) {
 
 }
 
+document.getElementById('txtFile').addEventListener('change', function (event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        const text = e.target.result;
+        //document.getElementById('output').textContent = text;
+        last_output = parseSetupFieldTo20Rows(text);
+        console.log(text);
+    };
+    reader.readAsText(file);
+});
+
+function parseSetupFieldTo20Rows(text) {
+    const lines = text.split('\n');
+    const field = [];
+
+    let insideField = false;
+
+    for (const line of lines) {
+        const trimmed = line.trim();
+
+        if (trimmed.startsWith('# Setup Field')) {
+            insideField = true;
+            continue;
+        }
+
+        if (insideField) {
+            if (trimmed === '' || trimmed.startsWith('#')) break;
+
+            // Convert each line into a row of G/N
+            const row = [...trimmed].map(char => char === 'X' ? 'G' : 'N');
+            field.push(row);
+        }
+    }
+
+
+    // Pad with empty rows at the top to make it 20 rows tall
+    const totalRows = 20;
+    const numColumns = 10;
+    const emptyRow = Array(numColumns).fill('N');
+
+    const paddedField = [];
+
+    const paddingCount = totalRows - field.length;
+    for (let i = 0; i < paddingCount; i++) {
+        paddedField.push([...emptyRow]);
+    }
+
+    // Then add the original rows
+    paddedField.push(...field);
+
+    return paddedField.reverse();
+}
+let last_output = [
+        ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'],
+        ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'],
+        ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'],
+        ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'],
+        ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'],
+        ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'],
+        ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'],
+        ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'],
+        ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'],
+        ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'],
+        ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'],
+        ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'],
+        ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'],
+        ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'],
+        ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'],
+        ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'],
+        ['G', 'G', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'],
+        ['G', 'G', 'G', 'N', 'N', 'N', 'N', 'N', 'N', 'N'],
+        ['G', 'G', 'G', 'G', 'N', 'N', 'N', 'N', 'N', 'N'],
+        ['G', 'G', 'G', 'G', 'G', 'N', 'N', 'N', 'N', 'N']];
+
+var pathMinimalQueuesWeightTable
+var pathMinimalQueues
+document.addEventListener('DOMContentLoaded', () => {
+    const fileInputMD = document.getElementById('mdFile');
+
+    fileInputMD.addEventListener('change', function (e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+            const text = e.target.result;
+            const parsedData = parseMarkDownQueues(text);
+            console.log('Parsed markdown Data:', parsedData);
+            pathMinimalQueues = parsedData;
+            pathMinimalQueuesWeightTable = setupMinQueuesWeightTable(pathMinimalQueues)
+        };
+
+        reader.readAsText(file);
+    });
+});
+
+function setupMinQueuesWeightTable(queues) {
+    let out = queues.map(subArr => subArr.slice()); // copy the array queues to out
+    for (let i = 0; i < out.length; i++) {
+        for (let j = 0; j < out[i].length; j++) {
+            out[i][j] = 0;
+        }
+    }
+    return out;
+}
+
+function parseMarkDownQueues(markdown) {
+    const regex = /```(?:\r?\n)?([\s\S]*?)```/g;
+    const result = [];
+    let match;
+
+    while ((match = regex.exec(markdown)) !== null) {
+        const content = match[1].trim(); // get the content inside the code block
+        const patterns = content.split(',').map(p => p.trim());
+        if (patterns.length > 0 && patterns[0]) {
+            result.push(patterns);
+        }
+    }
+
+    return result;
+}
+
+
+// function for parsing the path_minimal_strict_file.md and storing the
+// information in a meaningful way
+function parsePathMinimalStrictFile() {
+    console.log("Parsing pathminimal.md");
+    document.getElementById('mdFile').addEventListener('change', function (e) {
+
+    });
+}
+
+// the variable distributedQueues keeps track of how we order the queues.
+const distributedQueuesButton = document.getElementById('toggleDistributedQueues')
+let distributedQueues = distributedQueuesButton.checked;
+distributedQueuesButton.addEventListener('change', function () {
+    distributedQueues = distributedQueuesButton.checked;
+})
+
 function get_next_path_minimal_queue(queues) {
     console.log('in get_next_path_minimal_queue')
     if(distributedQueues) {
@@ -798,136 +941,6 @@ function save_wizard() {
         input_queue.value = `[${pcwizard_queue.value}]!,*!`
     }
     document.getElementById('field').value = ''
-}
-
-//alternatively, just update all of them when one of them changes?
-// the variable distributedQueues keeps track of how we order the queues.
-const distributedQueuesButton = document.getElementById('toggleDistributedQueues')
-let distributedQueues = distributedQueuesButton.checked;
-distributedQueuesButton.addEventListener('change', function () {
-    distributedQueues = distributedQueuesButton.checked;
-})
-
-var last_output
-
-document.getElementById('txtFile').addEventListener('change', function (event) {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = function (e) {
-        const text = e.target.result;
-        //document.getElementById('output').textContent = text;
-        last_output = parseSetupFieldTo20Rows(text);
-        console.log(text);
-    };
-    reader.readAsText(file);
-});
-
-function parseSetupFieldTo20Rows(text) {
-    const lines = text.split('\n');
-    const field = [];
-
-    let insideField = false;
-
-    for (const line of lines) {
-        const trimmed = line.trim();
-
-        if (trimmed.startsWith('# Setup Field')) {
-            insideField = true;
-            continue;
-        }
-
-        if (insideField) {
-            if (trimmed === '' || trimmed.startsWith('#')) break;
-
-            // Convert each line into a row of G/N
-            const row = [...trimmed].map(char => char === 'X' ? 'G' : 'N');
-            field.push(row);
-        }
-    }
-
-    // Pad with empty rows at the top to make it 20 rows tall
-    const totalRows = 20;
-    const numColumns = 10;
-    const emptyRow = Array(numColumns).fill('N');
-
-    const paddedField = [];
-
-    const paddingCount = totalRows - field.length;
-    for (let i = 0; i < paddingCount; i++) {
-        paddedField.push([...emptyRow]);
-    }
-
-    // Then add the original rows
-    paddedField.push(...field);
-
-    return paddedField.reverse();
-}
-
-var pathMinimalQueuesWeightTable
-var pathMinimalQueues
-document.addEventListener('DOMContentLoaded', () => {
-    const fileInputMD = document.getElementById('mdFile');
-
-    fileInputMD.addEventListener('change', function (e) {
-        const file = e.target.files[0];
-        if (!file) return;
-
-        const reader = new FileReader();
-
-        reader.onload = function (e) {
-            const text = e.target.result;
-            const parsedData = parseMarkDownQueues(text);
-            console.log('Parsed markdown Data:', parsedData);
-            pathMinimalQueues = parsedData;
-            pathMinimalQueuesWeightTable = setupMinQueuesWeightTable(pathMinimalQueues)
-        };
-
-        reader.readAsText(file);
-    });
-});
-
-function setupMinQueuesWeightTable(queues) {
-    let out = queues.map(subArr => subArr.slice()); // copy the array queues to out
-    for (let i = 0; i < out.length; i++) {
-        for (let j = 0; j < out[i].length; j++) {
-            out[i][j] = 0;
-        }
-    }
-    return out;
-}
-
-function parseMarkDownQueues(markdown) {
-    const regex = /```(?:\r?\n)?([\s\S]*?)```/g;
-    const result = [];
-    let match;
-
-    while ((match = regex.exec(markdown)) !== null) {
-        const content = match[1].trim(); // get the content inside the code block
-        const patterns = content.split(',').map(p => p.trim());
-        if (patterns.length > 0 && patterns[0]) {
-            result.push(patterns);
-        }
-    }
-
-    return result;
-}
-
-
-// function for parsing the path_minimal_strict_file.md and storing the
-// information in a meaningful way
-function parsePathMinimalStrictFile() {
-    console.log("Parsing pathminimal.md");
-    document.getElementById('mdFile').addEventListener('change', function (e) {
-
-    });
-}
-function togglePathMinimalStrictFile() {
-    console.log("Toggling path strict file mode")
-}
-function toggle() {
-    console.log("Toggling something")
 }
 
 /*
