@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QCQK6ZQ0DE"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-QCQK6ZQ0DE');
+    </script>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Tetris Customized practice</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="style-scripts.js"></script>
+
+</head>
+<body>
+    <div class="banner">
+        <h1 hidden> Tetris customized practice</h1>
+        <a class="title" href="/downstack-practice/usermode.html"> Tetris Customized Usermode - Practice</a>
+        <a class="setting_icon" onclick="toggleSettings()"> ⚙️</a>
+        <div class="nav">
+            <ul class="dropdown">
+                <li><a href="javascript:void(0);" onclick="toggleSettings()">Settings</a></li>
+                <li><a href="/downstack-practice/tspin-challenge.html">T-Spin Challenge</a></li>
+                <li><a href="/downstack-practice/">Downstack Practice</a></li>
+                <li><a href="/downstack-practice/pc-practice.html">Mid-game PC Practice</a></li>
+                <li><a href="/downstack-practice/usermode.html">Usermode (Includes PC Practice)</a></li>
+                <li><a href="/downstack-practice/tspin-practice.html">T-Spin Practice</a></li>
+                <li><a href="/downstack-practice/advance-tspin-practice.html">Advanced T-Spin Practice</a></li>
+                <li><a href="/downstack-practice/quad-practice.html">Quad Practice</a></li>
+                <li><a href="/downstack-practice/upstack-practice.html">Upstack Practice</a></li>
+            </ul>
+        </div>
+        <div class="burger" onclick="toggleBurger()">
+            <span></span>
+        </div>
+    </div>
+
+    <div id="setting">
+        <div class="settings-container">
+            <h1>Settings</h1>
+            <a class="close-button" href="javascript:void(0);" onclick="closeSettings()"></a>
+            <table>
+                <tbody>
+                <tr><td class="setting-label">Move Left</td><td><input class='keybind' id="input1" type="text" size="7" value="" readOnly></td></tr>
+                <tr><td class="setting-label">Move Right</td><td><input class='keybind' id="input2" type="text" size="7" value="" readOnly></td></tr>
+                <tr><td class="setting-label">Soft Drop</td><td><input class='keybind' id="input3" type="text" size="7" value="" readOnly></td></tr>
+                <tr><td class="setting-label">Hard Drop</td><td><input class='keybind' id="input4" type="text" size="7" value="" readOnly></td></tr>
+                <tr><td class="setting-label">Rotate Left</td><td><input class='keybind' id="input5" type="text" size="7" value="" readOnly></td></tr>
+                <tr><td class="setting-label">Rotate Right</td><td><input class='keybind' id="input6" type="text" size="7" value="" readOnly></td></tr>
+                <tr><td class="setting-label">Rotate 180</td><td><input class='keybind' id="input7" type="text" size="7" value="" readOnly></td></tr>
+                <tr><td class="setting-label">Hold</td><td><input class='keybind' id="input8" type="text" size="7" value="" readOnly></td></tr>
+                <tr><td class="setting-label">Retry</td><td><input class='keybind' id="input9" type="text" size="7" value="" readOnly></td></tr>
+                <tr><td class="setting-label">Show Answer</td><td><input class='keybind' id="input10" type="text" size="7" value="" readOnly></td></tr>
+                <tr><td class="setting-label">DAS (1 to 200)</td><td><input id="input11" type="number" min="1" max='200'></td></tr>
+                <tr><td class="setting-label">ARR (0 to 100)</td><td><input id="input12" type="number" min="0" max='100'></td></tr>
+                <tr><td class="setting-label">Generate New Map on Win</td><td><input id="input12.1" type="checkbox" min="0" max='100'></td></tr>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div id="pcwizard">
+        <div class="settings-container">
+            <h1>PC Wizard</h1>
+            <a class="close-button" href="javascript:void(0);" onclick="close_pcwizard()"></a>
+            <table>
+                <tbody>
+                    <label id="pcwizard_instruction">Choose a queue</label>
+                    <br>
+
+                    <br>
+                    <input type="text" id="pcwizard_queue" value="">
+                    <select id="pcwizard_option">
+                        <option value="customized">1st</option>
+                        <option value="customized">2nd</option>
+                        <option value="customized">3rd</option>
+                        <option value="customized">4th</option>
+                        <option value="customized">5th</option>
+                        <option value="customized">6th</option>
+                        <option value="customized">7th</option>
+                    </select>
+                    <br>
+                    <button class="mini_button green" onclick="save_wizard(),close_pcwizard(),play_a_map()"> Save and generate map</button>
+                    <label id="pcwizard_error"></label>
+
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div id="leftpanel" class="panel">
+
+            <h2>Winning Requirement</h2>
+            <div id="winning_requirement">
+                <p id="winning_requirement2">All Clear</p>
+            </div>
+
+            <button class="game_button orange" onclick="retry(); board.focus()">Retry</button>
+            <button class="game_button green" onclick="pcfinder()">Get help from PC finder</button>
+        </div>
+        <div id="tetris">
+            <canvas id="board" tabindex='1' width="520" height="610" z-index="4"></canvas>
+        </div>
+
+        <div id="rightpanel" class="panel">
+
+            <button class="game_button cyan" onclick="play_a_map(); board.focus()">Generate Map</button><br>
+
+            <div id="gamemode" class="open">
+                <table>
+                    <tbody>
+                     <tr><td><input type="file" id="txtFile" accept=".txt" /></td><td>last_output.txt</td></tr>
+                     <tr><td><input type="file" id="mdFile" accept=".md" /></td><td>path_minimal_strict.md</td></tr>
+                     <tr><td><input id="toggleDistributedQueues" type="checkbox"></td><td>cycle through minimal solutions</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+    <div id = "tcc" style class = "tc">
+        <div>
+            <span id="tc-dr">↺</span>
+            <span id="tc-h">⇄</span>
+            <span id="tc-hd">⤓</span>
+            </div>
+            <div>
+            <span id="tc-l">←</span>
+            <span id="tc-r">→</span>
+            <span id="tc-d">↓</span>
+            <span id="tc-cc">↰</span>
+            <span id="tc-c">↱</span>
+            </div>
+        <canvas id="mobile_controls"></canvas>
+    </div>
+    <script src="header.js"></script>
+    <script src="simple_encode.js" ></script>
+    <script src="pathmode.js" ></script>
+
+
+</body>
+</html>
