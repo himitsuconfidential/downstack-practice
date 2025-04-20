@@ -41,7 +41,7 @@ var weight_table = [
   [0, 0, 0],
 ];
 // this is a subset of the queues that solve 3x4 box.
-var queues = [
+queues = [
   ["JILZ", "JIZL", "JZIL"], // Array with 48 elements
   ["TIJO", "TIOJ", "TOIJ"], // Array with 48 elements
   ["JILZ", "JLIZ", "LJIZ"], // Array with 48 elements
