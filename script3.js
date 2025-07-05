@@ -713,6 +713,45 @@ function pcfinder(){
     console.log(fumen)
     window.open(url+'?fumen='+ encodeURIComponent(fumen))
 }
+
+function sfinder(){
+    var url = 'https://sfinder.sixwi.de'
+    var field = []
+    for (var i=0; i<230-80; i++) field.push(0)
+    console.log(field.length, JSON.stringify(field))
+    var clearLines = 0
+    var countOccupied = 0
+    for (var row=7; row>=0; row--){
+        for (var col=0; col<10; col++){
+            console.log(game.board[row][col])
+            if (game.board[row][col] == 'N')
+                field.push(0)
+            else
+                field.push(8)
+                
+        }
+    }
+
+    for (var row=0; row<=7; row++){
+        for (var col=0; col<10; col++){
+            if (game.board[row][col] != 'N'){
+                countOccupied ++
+                clearLines = row+1
+            }
+                
+        }
+    }
+    if ((clearLines*10 - countOccupied) % 4 ==2) clearLines ++
+    console.log(field.length, JSON.stringify(field))
+    for (var i=0; i<10; i++) field.push(0)
+    console.log(field.length, JSON.stringify(field))
+    var queue = [...game.holdmino].filter(x=>x!='G').join('') + game.bag.filter(x=>x!='G').join('')
+    
+    var fumen= encode_simple(field,queue)
+
+    console.log(fumen, clearLines,queue)
+    window.open(url+'?fumen='+ encodeURIComponent(fumen) + '&command=path&game=jstris&clearLines='+clearLines+'&queue=' + queue)
+}
 /*
 4.6 pcwizard
 */
